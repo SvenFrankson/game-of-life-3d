@@ -1,6 +1,6 @@
 class UniqueList<T> {
 
-    private _elements: T[] = [];
+    public _elements: T[] = [];
 
     public get length(): number {
         return this._elements.length;
@@ -45,5 +45,11 @@ class UniqueList<T> {
 
     public sort(callback: (e1: T, e2: T) => number): void {
         this._elements = this._elements.sort(callback);
+    }
+
+    public clone(): UniqueList<T> {
+        let clonedList = new UniqueList<T>();
+        clonedList._elements = [...this._elements];
+        return clonedList;
     }
 }

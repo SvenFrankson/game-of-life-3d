@@ -34,19 +34,21 @@ class OctreeNode<T> {
 
     public forEach(callback: (v: T, i: number, j: number, k: number) => void) {
         this.forEachNode((node) => {
-            for (let n = 0; n < 8; n++) {
-                let child = node.children[n];
-                if (child != undefined) {
-                    if (!(child instanceof OctreeNode)) {
-                        let ijk = OctreeNode.NToIJK[n];
-                        let I = 2 * node.i + ijk.i;
-                        let J = 2 * node.j + ijk.j;
-                        let K = 2 * node.k + ijk.k;
-                        let S = node.size * 0.5;
-                        for (let ii = 0; ii < S; ii++) {
-                            for (let jj = 0; jj < S; jj++) {
-                                for (let kk = 0; kk < S; kk++) {
-                                    callback(child, S * I + ii, S * J + jj, S * K + kk);
+            if (node.children) {
+                for (let n = 0; n < 8; n++) {
+                    let child = node.children[n];
+                    if (child != undefined) {
+                        if (!(child instanceof OctreeNode)) {
+                            let ijk = OctreeNode.NToIJK[n];
+                            let I = 2 * node.i + ijk.i;
+                            let J = 2 * node.j + ijk.j;
+                            let K = 2 * node.k + ijk.k;
+                            let S = node.size * 0.5;
+                            for (let ii = 0; ii < S; ii++) {
+                                for (let jj = 0; jj < S; jj++) {
+                                    for (let kk = 0; kk < S; kk++) {
+                                        callback(child, S * I + ii, S * J + jj, S * K + kk);
+                                    }
                                 }
                             }
                         }
@@ -58,15 +60,18 @@ class OctreeNode<T> {
 
     public forEachNode(callback: (node: OctreeNode<T>) => void) {
         callback(this);
-        for (let n = 0; n < 8; n++) {
-            let child = this.children[n];
-            if (child instanceof OctreeNode) {
-                child.forEachNode(callback);
+        if (this.children) {
+            for (let n = 0; n < 8; n++) {
+                let child = this.children[n];
+                if (child instanceof OctreeNode) {
+                    child.forEachNode(callback);
+                }
             }
         }
     }
 
     public collapse(): void {
+        return;
         if (this.children != undefined) {
             let first = this.children[0];
             for (let i = 1; i < 8; i++) {

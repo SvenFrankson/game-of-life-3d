@@ -1,4 +1,4 @@
-var CHUNCK_LENGTH = 8;
+var CHUNCK_LENGTH = 256;
 
 class ChunckMeshBuilder {
 
@@ -34,15 +34,13 @@ class ChunckMeshBuilder {
 		ChunckMeshBuilder._Vertices[i][j][k] = v;
 	}
     
-    public static BuildMesh(data: number[][][], sides: number): BABYLON.VertexData {
+    public static BuildMesh(data: OctreeNode<Cell>): BABYLON.VertexData {
 		ChunckMeshBuilder._Vertices = [];
 
         let lod = 2;
 
 		let vertexData = new BABYLON.VertexData();
 		let positions: number[] = [];
-		let summedPositions: number[] = [];
-        let summedPositionsCount: number[] = [];
 		let indices: number[] = [];
         let normals: number[] = [];
         let colors: number[] = [];
@@ -53,70 +51,40 @@ class ChunckMeshBuilder {
         let xMax = ChunckMeshBuilder._BaseVerticesCount;
         let yMax = ChunckMeshBuilder._BaseVerticesCount;
         let zMax = ChunckMeshBuilder._BaseVerticesCount;
-        if (sides & 0b1) {
-            xMin = - 2;
-        }
-        if (sides & 0b10) {
-            xMax = ChunckMeshBuilder._BaseVerticesCount + 2;
-        }
-        if (sides & 0b100) {
-            zMin = - 2;
-        }
-        if (sides & 0b1000) {
-            zMax = ChunckMeshBuilder._BaseVerticesCount + 2;
-        }
-        if (sides & 0b10000) {
-            yMin = - 2;
-        }
-        if (sides & 0b100000) {
-            yMax = ChunckMeshBuilder._BaseVerticesCount + 2;
-        }
-
-        let getData = (ii: number, jj: number, kk: number) => {            
-            return data[ii][jj][kk];
-        }
 
         let l = ChunckMeshBuilder._ReferencesLength;
         let references = ChunckMeshBuilder._References;
         references.fill(0);
-        let clonedData = ChunckMeshBuilder._Colors;
-        clonedData.fill(0);
-        for (let k = 0; k <= CHUNCK_LENGTH; k++) {
-            for (let j = 0; j <= CHUNCK_LENGTH; j++) {
-                for (let i = 0; i <= CHUNCK_LENGTH; i++) {
-                    let data = getData(i, j, k);
-                    if (data > 0) {
-                        let ii = i;
-                        let jj = j;
-                        let kk = k;
-                        clonedData[ii + jj * l + kk * l * l] = data;
-                        references[ii + jj * l + kk * l * l] |= 0b1 << 0;
-                        if (ii > 0) {
-                            references[(ii - 1) + jj * l + kk * l * l] |= 0b1 << 1;
-                        }
-                        if (ii > 0 && jj > 0) {
-                            references[(ii - 1) + (jj - 1) * l + kk * l * l] |= 0b1 << 2;
-                        }
-                        if (jj > 0) {
-                            references[ii + (jj - 1) * l + kk * l * l] |= 0b1 << 3;
-                        }
-                        if (kk > 0) {
-                            references[ii + jj * l + (kk - 1) * l * l] |= 0b1 << 4;
-                        }
-                        if (ii > 0 && kk > 0) {
-                            references[(ii - 1) + jj * l + (kk - 1) * l * l] |= 0b1 << 5;
-                        }
-                        if (ii > 0 && jj > 0 && kk > 0) {
-                            references[(ii - 1) + (jj - 1) * l + (kk - 1) * l * l] |= 0b1 << 6;
-                        }
-                        if (jj > 0 && kk > 0) {
-                            references[ii + (jj - 1) * l + (kk - 1) * l * l] |= 0b1 << 7;
-                        }
-                    }
+        data.forEach((cell, i, j, k) => {
+            if (cell.value > 0) {
+                let ii = i;
+                let jj = j;
+                let kk = k;
+                references[ii + jj * l + kk * l * l] |= 0b1 << 0;
+                if (ii > 0) {
+                    references[(ii - 1) + jj * l + kk * l * l] |= 0b1 << 1;
+                }
+                if (ii > 0 && jj > 0) {
+                    references[(ii - 1) + (jj - 1) * l + kk * l * l] |= 0b1 << 2;
+                }
+                if (jj > 0) {
+                    references[ii + (jj - 1) * l + kk * l * l] |= 0b1 << 3;
+                }
+                if (kk > 0) {
+                    references[ii + jj * l + (kk - 1) * l * l] |= 0b1 << 4;
+                }
+                if (ii > 0 && kk > 0) {
+                    references[(ii - 1) + jj * l + (kk - 1) * l * l] |= 0b1 << 5;
+                }
+                if (ii > 0 && jj > 0 && kk > 0) {
+                    references[(ii - 1) + (jj - 1) * l + (kk - 1) * l * l] |= 0b1 << 6;
+                }
+                if (jj > 0 && kk > 0) {
+                    references[ii + (jj - 1) * l + (kk - 1) * l * l] |= 0b1 << 7;
                 }
             }
-        }
-
+        })
+        
         for (let k = 0; k < CHUNCK_LENGTH; k++) {
             for (let j = 0; j < CHUNCK_LENGTH; j++) {
                 for (let i = 0; i < CHUNCK_LENGTH; i++) {
@@ -166,8 +134,6 @@ class ChunckMeshBuilder {
                                             positions.push(x, y, z);
                                             let color = BABYLON.Color3.White();
                                             colors.push(color.r, color.g, color.b, 1);
-                                            summedPositions.push(0, 0, 0);
-                                            summedPositionsCount.push(0);
                                             normals.push(0, 0, 0);
                                             ChunckMeshBuilder._SetVertex(pIndex, xIndex, yIndex, zIndex)
                                         }
@@ -184,16 +150,6 @@ class ChunckMeshBuilder {
                                     triIndexes[vIndex] = pIndex;
                                 }
 
-                                for (let n1 = 0; n1 < 3; n1++) {
-                                    let pIndex = triIndexes[n1];
-                                    if (pIndex != - 1) {
-                                        summedPositions[3 * pIndex] += sumX;
-                                        summedPositions[3 * pIndex + 1] += sumY;
-                                        summedPositions[3 * pIndex + 2] += sumZ;
-                                        summedPositionsCount[pIndex] += 3;
-                                    }
-                                }
-
                                 if (addTri) {
                                     indices.push(...triIndexes);
                                 }
@@ -208,36 +164,8 @@ class ChunckMeshBuilder {
             return;
         }
 
-        for (let i = 0; i < positions.length / 3; i++) {
-            let factor = summedPositionsCount[i] / 3;
-            positions[3 * i] = (summedPositions[3 * i] - factor * positions[3 * i]) / (summedPositionsCount[i] - factor);
-            //positions[3 * i + 1] = (summedPositions[3 * i + 1] - factor * positions[3 * i + 1]) / (summedPositionsCount[i] - factor);
-            positions[3 * i + 2] = (summedPositions[3 * i + 2] - factor * positions[3 * i + 2]) / (summedPositionsCount[i] - factor);
-        }
-
-        for (let i = 0; i < positions.length / 3; i++) {
-            positions[3 * i] = (positions[3 * i] + 0.5);
-            positions[3 * i + 1] = (positions[3 * i + 1]);
-            positions[3 * i + 2] = (positions[3 * i + 2] + 0.5);
-        }
-
         let computedNormals = [];
         BABYLON.VertexData.ComputeNormals(positions, indices, computedNormals);
-
-        for (let i = 0; i < normals.length / 3; i++) {
-            let nx = normals[3 * i];
-            let ny = normals[3 * i + 1];
-            let nz = normals[3 * i + 2];
-
-            let lSquared = nx * nx + ny * ny + nz * nz;
-            if (lSquared > 0) {
-                let l = Math.sqrt(lSquared);
-                computedNormals[3 * i] = nx / l;
-                computedNormals[3 * i + 1] = ny / l;
-                computedNormals[3 * i + 2] = nz / l;
-            }
-        }
-
 		vertexData.positions = positions;
 		vertexData.colors = colors;
 		vertexData.normals = computedNormals;
