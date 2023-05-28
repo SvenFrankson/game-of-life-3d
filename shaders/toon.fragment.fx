@@ -2,6 +2,7 @@
 precision highp float;
  
 uniform vec3 lightInvDirW;
+uniform vec3 diffuseColor;
 
 in vec3 vPositionW;
 in vec3 vNormalW;
@@ -12,10 +13,11 @@ out vec4 outColor;
  
 void main() {
    float sunLightFactor = max((dot(vNormalW, lightInvDirW) + 0.5) / 1.5, 0.0);
+   sunLightFactor *= 0.8 + 0.2;
 
-   float lightFactor = round(sunLightFactor * 5.) / 5.;
+   float lightFactor = round(sunLightFactor * 8.) / 8.;
 
-   vec3 color = vColor.rgb;
+   //vec3 color = vColor.rgb;
 
-   outColor = vec4(color * lightFactor, 1.);
+   outColor = vec4(diffuseColor * lightFactor, 1.);
 }
