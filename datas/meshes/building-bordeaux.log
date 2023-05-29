@@ -18,16 +18,68 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		processing begun of material:  Material.002
 		processing begun of material:  Material.003
 		processing begun of multimaterial:  building_bordeaux.Multimaterial#0
-		num positions      :  1955
-		num normals        :  1955
+		num positions      :  510
+		num normals        :  510
 		num tangents       :  0
-		num uvs            :  3910
+		num uvs            :  1020
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  2164
-		WARNING: # of 0 area faces found:  218
+		num triangles      :  472
+		WARNING: # of 0 area faces found:  33
+	processing begun of mesh:  medium--ground-window.001
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.002
+		processing begun of material:  Material.003
+		processing begun of material:  Material.004
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#1
+		num positions      :  929
+		num normals        :  929
+		num tangents       :  0
+		num uvs            :  1858
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  992
+	processing begun of mesh:  medium--ground-window.002
+		processing begun of material:  white-wood
+		processing begun of material:  Material.002
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.003
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#2
+		num positions      :  420
+		num normals        :  420
+		num tangents       :  0
+		num uvs            :  840
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  442
+	processing begun of mesh:  Circle
+		processing begun of material:  Material.008
+		processing begun of material:  Material.007
+		processing begun of material:  Material.006
+		processing begun of material:  Material.005
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#3
+		num positions      :  163
+		num normals        :  163
+		num tangents       :  0
+		num uvs            :  326
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  160
 ========= Writing of JSON file started =========
 	writing mesh:  medium--ground-window
+	writing mesh:  medium--ground-window.001
+	writing mesh:  medium--ground-window.002
+	writing mesh:  Circle
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.1087 secs
+elapsed time:  0 min, 0.1137 secs
