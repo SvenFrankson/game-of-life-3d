@@ -56,13 +56,14 @@ class Main {
         //this.scene.clearColor = BABYLON.Color4.FromHexString("#eb4034ff");
         this.scene.clearColor = BABYLON.Color4.FromHexString("#eb4034");
 
-        this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(1, 3, 2)).normalize(), this.scene);
+        this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(1, 3, - 2)).normalize(), this.scene);
 
         this.cameraManager = new BABYLON.ArcRotateCamera("camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0));
         this.cameraManager.setPosition(new BABYLON.Vector3(30, 30, -10));
         this.cameraManager.attachControl();
+        OutlinePostProcess.AddOutlinePostProcess(this.cameraManager);
 
-        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/city.babylon", "", this.scene, (meshes) => {
+        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/building-bordeaux.babylon", "", this.scene, (meshes) => {
             console.log(meshes);
             let mesh = meshes[0];
             if (mesh instanceof BABYLON.Mesh) {
