@@ -76,19 +76,9 @@ class Main {
                                 toonMat.setColor(subMat.albedoColor);
                                 toonMat.setLightInvDir(this.light.direction);
                                 material.subMaterials[i] = toonMat;
-                                console.log("!");
-                            }
-                            else {
-                                console.log(subMat);
                             }
                         }
                     }
-                    else {
-                        console.log(mesh.material);
-                    }
-                }
-                else {
-                    console.log(mesh);
                 }
             });
         });
@@ -107,24 +97,43 @@ class Main {
                                 toonMat.setColor(subMat.albedoColor);
                                 toonMat.setLightInvDir(this.light.direction);
                                 material.subMaterials[i] = toonMat;
-                                console.log("!");
-                            }
-                            else {
-                                console.log(subMat);
                             }
                         }
                     }
-                    else {
-                        console.log(mesh.material);
-                    }
                     mesh.parent = container;
-                }
-                else {
-                    console.log(mesh);
                 }
             });
             container.position.y += 0.2;
             container.position.x += 8;
+            container.rotation.y = Math.PI / 2;
+        });
+
+        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/street-tree-1.babylon", "", this.scene, (meshes) => {
+            console.log(meshes);
+            let container = new BABYLON.Mesh("container");
+            meshes.forEach(mesh => {
+                if (mesh instanceof BABYLON.Mesh) {
+                    let material = mesh.material;
+                    if (material instanceof BABYLON.MultiMaterial) {
+                        for (let i = 0; i < material.subMaterials.length; i++) {
+                            let subMat = material.subMaterials[i];
+                            if (subMat instanceof BABYLON.PBRMaterial) {
+                                let toonMat = new ToonMaterial(subMat.name + "-3-toon", this.scene);
+                                toonMat.setColor(subMat.albedoColor);
+                                toonMat.setLightInvDir(this.light.direction);
+                                material.subMaterials[i] = toonMat;
+                            }
+                        }
+                    }
+                    else {
+                        console.log(mesh);
+                    }
+                    mesh.parent = container;
+                }
+            });
+            container.position.y += 0.2;
+            container.position.x -= 4.5;
+            container.position.z += 4.5;
             container.rotation.y = Math.PI / 2;
         });
 	}

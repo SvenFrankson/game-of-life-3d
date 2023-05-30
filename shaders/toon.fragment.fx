@@ -13,7 +13,7 @@ out vec4 outColor;
  
 void main() {
    float sunLightFactor = max((dot(vNormalW, lightInvDirW) + 0.5) / 1.5, 0.0);
-   sunLightFactor *= 0.8 + 0.2;
+   sunLightFactor *= 0.6 + 0.4;
 
    float lightFactor = round(sunLightFactor * 8.) / 8.;
 
