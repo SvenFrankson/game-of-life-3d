@@ -63,79 +63,21 @@ class Main {
         this.cameraManager.attachControl();
         OutlinePostProcess.AddOutlinePostProcess(this.cameraManager);
 
-        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/roads.babylon", "", this.scene, (meshes) => {
-            console.log(meshes);
-            meshes.forEach(mesh => {
-                if (mesh instanceof BABYLON.Mesh) {
-                    let material = mesh.material;
-                    if (material instanceof BABYLON.MultiMaterial) {
-                        for (let i = 0; i < material.subMaterials.length; i++) {
-                            let subMat = material.subMaterials[i];
-                            if (subMat instanceof BABYLON.PBRMaterial) {
-                                let toonMat = new ToonMaterial(subMat.name + "-toon", this.scene);
-                                toonMat.setColor(subMat.albedoColor);
-                                toonMat.setLightInvDir(this.light.direction);
-                                material.subMaterials[i] = toonMat;
-                            }
-                        }
-                    }
-                }
-            });
-        });
+        let roads = new Prop("roads");
+        roads.instantiate();
 
-        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/building-bordeaux.babylon", "", this.scene, (meshes) => {
-            console.log(meshes);
-            let container = new BABYLON.Mesh("container");
-            meshes.forEach(mesh => {
-                if (mesh instanceof BABYLON.Mesh) {
-                    let material = mesh.material;
-                    if (material instanceof BABYLON.MultiMaterial) {
-                        for (let i = 0; i < material.subMaterials.length; i++) {
-                            let subMat = material.subMaterials[i];
-                            if (subMat instanceof BABYLON.PBRMaterial) {
-                                let toonMat = new ToonMaterial(subMat.name + "-toon", this.scene);
-                                toonMat.setColor(subMat.albedoColor);
-                                toonMat.setLightInvDir(this.light.direction);
-                                material.subMaterials[i] = toonMat;
-                            }
-                        }
-                    }
-                    mesh.parent = container;
-                }
-            });
-            container.position.y += 0.2;
-            container.position.x += 8;
-            container.rotation.y = Math.PI / 2;
-        });
+        let building = new Prop("building-bordeaux");
+        building.position.y += 0.2;
+        building.position.x += 8;
+        building.rotation.y = Math.PI / 2;
+        building.instantiate();
 
-        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/street-tree-1.babylon", "", this.scene, (meshes) => {
-            console.log(meshes);
-            let container = new BABYLON.Mesh("container");
-            meshes.forEach(mesh => {
-                if (mesh instanceof BABYLON.Mesh) {
-                    let material = mesh.material;
-                    if (material instanceof BABYLON.MultiMaterial) {
-                        for (let i = 0; i < material.subMaterials.length; i++) {
-                            let subMat = material.subMaterials[i];
-                            if (subMat instanceof BABYLON.PBRMaterial) {
-                                let toonMat = new ToonMaterial(subMat.name + "-3-toon", this.scene);
-                                toonMat.setColor(subMat.albedoColor);
-                                toonMat.setLightInvDir(this.light.direction);
-                                material.subMaterials[i] = toonMat;
-                            }
-                        }
-                    }
-                    else {
-                        console.log(mesh);
-                    }
-                    mesh.parent = container;
-                }
-            });
-            container.position.y += 0.2;
-            container.position.x -= 4.5;
-            container.position.z += 4.5;
-            container.rotation.y = Math.PI / 2;
-        });
+        let tree = new Prop("street-tree-1");
+        tree.position.y += 0.2;
+        tree.position.x -= 4.5;
+        tree.position.z += 4.5;
+        tree.rotation.y = Math.PI / 2;
+        tree.instantiate();
 	}
 
 	public animate(): void {
