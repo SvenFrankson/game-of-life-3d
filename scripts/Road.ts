@@ -6,21 +6,31 @@ class Road {
         return Road._Ident;
     }
 
+    public get r(): number {
+        return this._r;
+    }
+    public set r(v: number) {
+        this._r = v;
+        if (this.mesh) {
+            this.mesh.rotation.y = Math.PI / 2 * this.r;
+        }
+    }
+
     private _ident: number;
     public get ident(): number {
         return this._ident;
     }
 
-    private _modelName: string = "";
-    public get modelName(): string {
-        return this._modelName;
+    private _roadType: RoadType = RoadType.None;
+    public get roadType(): RoadType {
+        return this._roadType;
     }
 
     public mesh: BABYLON.Mesh;
 
-    constructor(public i: number, public j: number, public r: number, public roadManager: RoadManager, public scene: BABYLON.Scene, modelName: string = "none") {
+    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.None) {
         this._ident = Road.MakeNewIdent();
-        this._modelName = modelName;
+        this._roadType = modelName;
     }
 
     private _instantiated = false;
@@ -29,15 +39,14 @@ class Road {
             this.mesh.dispose();
         }
 
-        if (this._modelName === "none") {
-            this.mesh = BABYLON.MeshBuilder.CreateBox("empty-road", { width: 9.5, height: 0.2, depth: 9.5 });
+        let baseMesh = this.roadManager.roadMeshes.get(RoadsData.List[this._roadType]);
+        if (baseMesh) {
+            this.mesh = baseMesh.clone(this._roadType + "-" + this._ident.toFixed(0));
         }
         else {
-            let baseMesh = this.roadManager.roadMeshes.get(this._modelName);
-            if (baseMesh) {
-                this.mesh = baseMesh.clone(this._modelName + "-" + this._ident.toFixed(0));
-            }
+            this.mesh = BABYLON.MeshBuilder.CreateBox("empty-road", { width: 9.5, height: 0.2, depth: 9.5 });
         }
+
         this.mesh.position.x = this.i * 10;
         this.mesh.position.y = 0;
         this.mesh.position.z = this.j * 10;
@@ -46,8 +55,8 @@ class Road {
         this._instantiated = true;
     }
 
-    public setModelName(modelName: string): void {
-        this._modelName = modelName;
+    public setRoadType(modelName: RoadType): void {
+        this._roadType = modelName;
         if (this._instantiated) {
             this.mesh.dispose();
             this.instantiate();

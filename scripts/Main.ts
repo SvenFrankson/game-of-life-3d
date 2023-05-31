@@ -1,18 +1,6 @@
 /// <reference path="../lib/babylon.d.ts"/>
 
-class Cell {
-
-    public nCount: number = 0;
-    public tmpValue: number = 0;
-
-    constructor(public value: number) {
-
-    }
-
-    public update(): void {
-        this.tmpValue = 0.95 * this.tmpValue + 0.05 * this.value;
-    }
-}
+var MAX_ROAD_SIZE: number = 7;
 
 class Main {
     
@@ -21,12 +9,15 @@ class Main {
 	public canvas: HTMLCanvasElement;
 	public engine: BABYLON.Engine;
     public scene: BABYLON.Scene;
-    public cameraManager: BABYLON.ArcRotateCamera;
+    public camera: BABYLON.ArcRotateCamera;
     public light: BABYLON.HemisphericLight;
 
     public static redMaterial: BABYLON.StandardMaterial;
     public static greenMaterial: BABYLON.StandardMaterial;
     public static blueMaterial: BABYLON.StandardMaterial;
+
+    public roads: Road[];
+    public roadManager: RoadManager;
 
     constructor(canvasElement: string) {
         Main.Instance = this;
@@ -37,7 +28,7 @@ class Main {
 		BABYLON.Engine.ShadersRepository = "./shaders/";
 	}
 
-    public createScene(): void {
+    public async createScene(): Promise<void> {
         //window.localStorage.clear();
 
 		this.scene = new BABYLON.Scene(this.engine);
@@ -58,10 +49,21 @@ class Main {
 
         this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(- 1, 3, 2)).normalize(), this.scene);
 
-        this.cameraManager = new BABYLON.ArcRotateCamera("camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0));
-        this.cameraManager.setPosition(new BABYLON.Vector3(30, 30, -10));
-        this.cameraManager.attachControl();
-        OutlinePostProcess.AddOutlinePostProcess(this.cameraManager);
+        this.camera = new BABYLON.ArcRotateCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
+        this.camera.setPosition(new BABYLON.Vector3(30, 30, -10));
+        this.camera.attachControl();
+        OutlinePostProcess.AddOutlinePostProcess(this.camera);
+
+        this.roadManager = new RoadManager();
+        await this.roadManager.initialize();
+
+        this.roads = [];
+        for (let i = 0; i < MAX_ROAD_SIZE; i++) {
+            for (let j = 0; j < MAX_ROAD_SIZE; j++) {
+                this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.roadManager, this.scene, RoadType.None);
+                this.roads[i + MAX_ROAD_SIZE * j].instantiate();
+            }
+        }
 
         let building = new Prop("building-bordeaux");
         building.position.y += 0.2;
@@ -76,30 +78,8 @@ class Main {
         tree.rotation.y = Math.PI / 2;
         tree.instantiate();
 
-        let roadManager = new RoadManager();
-        let roads: Road[][] = [];
-        roadManager.initialize().then(() => {
-            for (let i = - 3; i <= 3; i++) {
-                roads[i] = [];
-                for (let j = - 3; j <= 3; j++) {
-                    roads[i][j] = new Road(i, j, 2, roadManager, this.scene, "none");
-                    roads[i][j].instantiate();
-                }
-            }
-            
-            roads[-1][1].setModelName("plaza");
-            roads[-1][0].r = 1;
-            roads[-1][0].setModelName("crosswalk");
-            roads[-1][-1].setModelName("plaza");
-
-            roads[0][0].setModelName("tri-cross");
-            roads[0][1].setModelName("straight");
-            roads[0][-1].setModelName("straight");
-
-            roads[1][1].setModelName("plaza");
-            roads[1][0].setModelName("plaza");
-            roads[1][-1].setModelName("plaza");
-        });
+        let roadEditor = new RoadEditor(this);
+        roadEditor.initialize();
 	}
 
 	public animate(): void {

@@ -19,7 +19,6 @@ class RoadManager {
                                 }
                             }
                         }
-                        console.log(mesh.name);
                         this.roadMeshes.set(mesh.name, mesh);
                         mesh.position.y = - 10 - p;
                         p++;

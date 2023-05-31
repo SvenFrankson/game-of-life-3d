@@ -7,6 +7,16 @@ class PropsData {
     ];
 }
 
+enum RoadType {
+    None,
+    Plaza,
+    Straight,
+    Crosswalk,
+    Turn,
+    TriCross,
+    QuadCross
+}
+
 class RoadsData {
     
     public static List: string[] = [
