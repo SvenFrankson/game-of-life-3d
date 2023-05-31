@@ -11,20 +11,24 @@ class Prop extends BABYLON.Mesh {
         return this._ident;
     }
 
+    public get modelName(): string {
+        return this._modelName;
+    }
+
     public get scene(): BABYLON.Scene {
         return this.getScene();
     }
 
-    constructor(public modelName: string) {
+    constructor(private _modelName: string) {
         super("");
         this._ident = Prop.MakeNewIdent();
-        this.name = modelName + "-" + this._ident.toFixed(0);
+        this.name = this._modelName + "-" + this._ident.toFixed(0);
     }
 
+    private _instantiated = false;
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
-            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/" + this.modelName + ".babylon", "", this.scene, (meshes) => {
-                console.log(meshes);
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/" + this._modelName + ".babylon", "", this.scene, (meshes) => {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         let material = mesh.material;
@@ -41,7 +45,20 @@ class Prop extends BABYLON.Mesh {
                         mesh.parent = this;
                     }
                 });
+                this._instantiated = true;
+                resolve();
             });
         });
+    }
+
+    public async setModelName(modelName: string): Promise<void> {
+        this._modelName = modelName;
+        this.name = this._modelName + "-" + this._ident.toFixed(0);
+        if (this._instantiated) {
+            this.getChildMeshes().forEach(m => {
+                m.dispose();
+            })
+            await this.instantiate();
+        }
     }
 }

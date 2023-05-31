@@ -63,9 +63,6 @@ class Main {
         this.cameraManager.attachControl();
         OutlinePostProcess.AddOutlinePostProcess(this.cameraManager);
 
-        let roads = new Prop("roads");
-        roads.instantiate();
-
         let building = new Prop("building-bordeaux");
         building.position.y += 0.2;
         building.position.x += 8;
@@ -78,6 +75,31 @@ class Main {
         tree.position.z += 4.5;
         tree.rotation.y = Math.PI / 2;
         tree.instantiate();
+
+        let roadManager = new RoadManager();
+        let roads: Road[][] = [];
+        roadManager.initialize().then(() => {
+            for (let i = - 3; i <= 3; i++) {
+                roads[i] = [];
+                for (let j = - 3; j <= 3; j++) {
+                    roads[i][j] = new Road(i, j, 2, roadManager, this.scene, "none");
+                    roads[i][j].instantiate();
+                }
+            }
+            
+            roads[-1][1].setModelName("plaza");
+            roads[-1][0].r = 1;
+            roads[-1][0].setModelName("crosswalk");
+            roads[-1][-1].setModelName("plaza");
+
+            roads[0][0].setModelName("tri-cross");
+            roads[0][1].setModelName("straight");
+            roads[0][-1].setModelName("straight");
+
+            roads[1][1].setModelName("plaza");
+            roads[1][0].setModelName("plaza");
+            roads[1][-1].setModelName("plaza");
+        });
 	}
 
 	public animate(): void {

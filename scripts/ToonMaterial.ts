@@ -10,11 +10,13 @@ class ToonMaterial extends BABYLON.ShaderMaterial {
             },
             {
                 attributes: ["position", "normal", "uv", "color"],
-                uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "lightInvDirW", "diffuseColor"]
+                uniforms: ["world", "worldView", "worldViewProjection", "view", "projection", "lightInvDirW", "diffuseColor"],
+                defines: ["#define INSTANCES"]
             }
         );
 
-        this.setVector3("lightInvDirW", (new BABYLON.Vector3(0.5, 2.5, 1.5)).normalize());
+        this.setVector3("lightInvDirW", this._lightInvDirW);
+        this.setColor3("diffuseColor", this._color);
 
         this.scene.onBeforeRenderObservable.add(this.update);
     }
