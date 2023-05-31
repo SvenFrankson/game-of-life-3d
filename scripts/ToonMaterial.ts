@@ -49,7 +49,7 @@ class ToonMaterial extends BABYLON.ShaderMaterial {
         return this._color;
     }
 
-    public setColor(color: BABYLON.Color3): void {
+    public setDiffuseColor(color: BABYLON.Color3): void {
         if (color.r != this._color.r || color.g != this._color.g || color.b != this._color.b) {
             this._color.copyFrom(color);
             this.setColor3("diffuseColor", this._color);

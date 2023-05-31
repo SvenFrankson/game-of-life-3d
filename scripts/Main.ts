@@ -12,9 +12,9 @@ class Main {
     public camera: BABYLON.ArcRotateCamera;
     public light: BABYLON.HemisphericLight;
 
-    public static redMaterial: BABYLON.StandardMaterial;
-    public static greenMaterial: BABYLON.StandardMaterial;
-    public static blueMaterial: BABYLON.StandardMaterial;
+    public static TestRedMaterial: ToonMaterial;
+    public static TestGreenMaterial: ToonMaterial;
+    public static TestBlueMaterial: ToonMaterial;
 
     public roads: Road[];
     public roadManager: RoadManager;
@@ -33,15 +33,14 @@ class Main {
 
 		this.scene = new BABYLON.Scene(this.engine);
 
-        Main.redMaterial = new BABYLON.StandardMaterial("debug");
-        Main.redMaterial.specularColor.copyFromFloats(0, 0, 0);
-        Main.redMaterial.diffuseColor.copyFromFloats(1, 0, 0);
-        Main.greenMaterial = new BABYLON.StandardMaterial("debug");
-        Main.greenMaterial.specularColor.copyFromFloats(0, 0, 0);
-        Main.greenMaterial.diffuseColor.copyFromFloats(0, 1, 0);
-        Main.blueMaterial = new BABYLON.StandardMaterial("debug");
-        Main.blueMaterial.specularColor.copyFromFloats(0, 0, 0);
-        Main.blueMaterial.diffuseColor.copyFromFloats(0, 0, 1);
+        Main.TestRedMaterial = new ToonMaterial("red-material", this.scene);
+        Main.TestRedMaterial.setDiffuseColor(BABYLON.Color3.Red());
+
+        Main.TestGreenMaterial = new ToonMaterial("green-material", this.scene);
+        Main.TestGreenMaterial.setDiffuseColor(BABYLON.Color3.Green());
+
+        Main.TestBlueMaterial = new ToonMaterial("blue-material", this.scene);
+        Main.TestBlueMaterial.setDiffuseColor(BABYLON.Color3.Blue());
 
 		//this.scene.clearColor.copyFromFloats(166 / 255, 231 / 255, 255 / 255, 1);
         //this.scene.clearColor = BABYLON.Color4.FromHexString("#eb4034ff");

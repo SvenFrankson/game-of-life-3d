@@ -37,7 +37,7 @@ class Prop extends BABYLON.Mesh {
                                 let subMat = material.subMaterials[i];
                                 if (subMat instanceof BABYLON.PBRMaterial) {
                                     let toonMat = new ToonMaterial(subMat.name + "-3-toon", this.scene);
-                                    toonMat.setColor(subMat.albedoColor);
+                                    toonMat.setDiffuseColor(subMat.albedoColor);
                                     material.subMaterials[i] = toonMat;
                                 }
                             }

@@ -14,13 +14,15 @@ class RoadManager {
                                 let subMat = material.subMaterials[i];
                                 if (subMat instanceof BABYLON.PBRMaterial) {
                                     let toonMat = new ToonMaterial(subMat.name, mesh.getScene());
-                                    toonMat.setColor(subMat.albedoColor);
+                                    toonMat.setDiffuseColor(subMat.albedoColor);
                                     material.subMaterials[i] = toonMat;
                                 }
                             }
                         }
                         this.roadMeshes.set(mesh.name, mesh);
+                        mesh.position.x = 0;
                         mesh.position.y = - 10 - p;
+                        mesh.position.z = 0;
                         p++;
                     }
                 });

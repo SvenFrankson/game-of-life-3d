@@ -32,6 +32,7 @@ class RoadEditor {
 
     public initialize(): void {
         this.roadSelector = BABYLON.MeshBuilder.CreateBox("road-selector", { width: 10, height: 0.5, depth: 10 });
+        this.roadSelector.isPickable = false;
         let roadSelectorMaterial = new BABYLON.StandardMaterial("road-selector-material");
         roadSelectorMaterial.diffuseColor.copyFromFloats(0, 1, 1);
         roadSelectorMaterial.specularColor.copyFromFloats(0, 0, 0);
@@ -42,15 +43,17 @@ class RoadEditor {
         this.selectedRoadButtonsContainer.rotationQuaternion = BABYLON.Quaternion.Identity();
 
         this.turnRoadLeftButton = BABYLON.MeshBuilder.CreateBox("turn-road-left-button", { width: 2, height: 0.5, depth: 2 });
+        this.turnRoadLeftButton.material = Main.TestBlueMaterial;
         this.turnRoadLeftButton.position.x = - 1.5;
         this.turnRoadLeftButton.position.y = 1;
-        this.turnRoadLeftButton.position.z = 7 * Math.SQRT2;
+        this.turnRoadLeftButton.position.z = 6 * Math.SQRT2;
         this.turnRoadLeftButton.parent = this.selectedRoadButtonsContainer;
 
         this.turnRoadRightButton = BABYLON.MeshBuilder.CreateBox("turn-road-right-button", { width: 2, height: 0.5, depth: 2 });
+        this.turnRoadRightButton.material = Main.TestBlueMaterial;
         this.turnRoadRightButton.position.x = 1.5;
         this.turnRoadRightButton.position.y = 1;
-        this.turnRoadRightButton.position.z = 7 * Math.SQRT2;
+        this.turnRoadRightButton.position.z = 6 * Math.SQRT2;
         this.turnRoadRightButton.parent = this.selectedRoadButtonsContainer;
 
         this.main.scene.onBeforeRenderObservable.add(this._update);
@@ -77,12 +80,14 @@ class RoadEditor {
     }
 
     private _pointerDownPos: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    private _lastPointerUpTime: number = 0;
     private _onPointerObservable = (eventData: BABYLON.PointerInfo, eventState: BABYLON.EventState) => {
         if (eventData.pickInfo && eventData.pickInfo.pickedPoint) {
             if (eventData.type === BABYLON.PointerEventTypes.POINTERDOWN) {
                 this._pointerDownPos.copyFrom(eventData.pickInfo.pickedPoint);
             }
             else if (eventData.type === BABYLON.PointerEventTypes.POINTERUP) {
+                
                 let deltaPos = BABYLON.Vector3.DistanceSquared(eventData.pickInfo.pickedPoint, this._pointerDownPos);
                 if (deltaPos < 0.5 * 0.5) {
                     let pickedMesh = eventData.pickInfo.pickedMesh;
@@ -99,6 +104,12 @@ class RoadEditor {
                     else {
                         let road = this.main.roads.find(r => { return r.mesh === eventData.pickInfo.pickedMesh; });
                         if (road) {
+                            if (this.selectedRoad && road === this.selectedRoad) {
+                                if (performance.now() - this._lastPointerUpTime < 500) {
+                                    this.main.camera.target.x = this.selectedRoad.i * 10;
+                                    this.main.camera.target.z = this.selectedRoad.j * 10;
+                                }
+                            }
                             this.setSelectedRoad(road);
                         }
                         else {
@@ -106,6 +117,7 @@ class RoadEditor {
                         }
                     }
                 }
+                this._lastPointerUpTime = performance.now();
             }
         }
     }
