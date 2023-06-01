@@ -137,6 +137,9 @@ class RoadEditor {
                 }
             }
         }
+        else {
+            this.setSelectedRoad(undefined);
+        }
         this._lastPointerUpTime = performance.now();
         this.draggedRoadType = RoadType.None;
     }
