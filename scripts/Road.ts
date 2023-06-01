@@ -21,14 +21,14 @@ class Road {
         return this._ident;
     }
 
-    private _roadType: RoadType = RoadType.None;
+    private _roadType: RoadType = RoadType.Empty;
     public get roadType(): RoadType {
         return this._roadType;
     }
 
     public mesh: BABYLON.Mesh;
 
-    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.None) {
+    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.Empty) {
         this._ident = Road.MakeNewIdent();
         this._roadType = modelName;
     }

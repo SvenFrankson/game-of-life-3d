@@ -8,13 +8,14 @@ class PropsData {
 }
 
 enum RoadType {
-    None,
+    Empty,
     Plaza,
     Straight,
     Crosswalk,
     Turn,
     TriCross,
-    QuadCross
+    QuadCross,
+    None
 }
 
 class RoadsData {

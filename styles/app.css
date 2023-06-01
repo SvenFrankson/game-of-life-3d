@@ -154,4 +154,5 @@ html, body {
 	background-color: white;
 	text-align: center;
 	margin: 2px;
+	user-select: none;
 }

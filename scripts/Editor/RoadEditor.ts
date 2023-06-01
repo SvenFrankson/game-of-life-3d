@@ -3,6 +3,7 @@ class RoadEditor {
     public roadEditionMenu: HTMLDivElement;
 
     public selectedRoad: Road;
+    public draggedRoadType: RoadType = RoadType.Empty;
     public roadSelector: BABYLON.Mesh;
     public selectedRoadButtonsContainer: BABYLON.Mesh;
     public turnRoadLeftButton: BABYLON.Mesh;
@@ -26,7 +27,11 @@ class RoadEditor {
                 if (this.selectedRoad) {
                     this.selectedRoad.setRoadType(roadType);
                 }
-            })
+                this.draggedRoadType = RoadType.None;
+            });
+            roadEditionButton.addEventListener("pointerdown", () => {
+                this.draggedRoadType = roadType;
+            });
         }
     }
 
@@ -57,7 +62,8 @@ class RoadEditor {
         this.turnRoadRightButton.parent = this.selectedRoadButtonsContainer;
 
         this.main.scene.onBeforeRenderObservable.add(this._update);
-        this.main.scene.onPointerObservable.add(this._onPointerObservable)
+        this.main.canvas.addEventListener("pointerdown", this._onPointerDown);
+        this.main.canvas.addEventListener("pointerup", this._onPointerUp);
     }
 
     public setSelectedRoad(road: Road): void {
@@ -81,45 +87,58 @@ class RoadEditor {
 
     private _pointerDownPos: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     private _lastPointerUpTime: number = 0;
-    private _onPointerObservable = (eventData: BABYLON.PointerInfo, eventState: BABYLON.EventState) => {
-        if (eventData.pickInfo && eventData.pickInfo.pickedPoint) {
-            if (eventData.type === BABYLON.PointerEventTypes.POINTERDOWN) {
-                this._pointerDownPos.copyFrom(eventData.pickInfo.pickedPoint);
-            }
-            else if (eventData.type === BABYLON.PointerEventTypes.POINTERUP) {
-                
-                let deltaPos = BABYLON.Vector3.DistanceSquared(eventData.pickInfo.pickedPoint, this._pointerDownPos);
-                if (deltaPos < 0.5 * 0.5) {
-                    let pickedMesh = eventData.pickInfo.pickedMesh;
-                    if (pickedMesh === this.turnRoadLeftButton) {
-                        if (this.selectedRoad) {
-                            this.selectedRoad.r = (this.selectedRoad.r - 1 + 4) % 4;
-                        }
-                    }
-                    else if (pickedMesh === this.turnRoadRightButton) {
-                        if (this.selectedRoad) {
-                            this.selectedRoad.r = (this.selectedRoad.r + 1 + 4) % 4;
-                        }
-                    }
-                    else {
-                        let road = this.main.roads.find(r => { return r.mesh === eventData.pickInfo.pickedMesh; });
-                        if (road) {
-                            if (this.selectedRoad && road === this.selectedRoad) {
-                                if (performance.now() - this._lastPointerUpTime < 500) {
-                                    this.main.camera.target.x = this.selectedRoad.i * 10;
-                                    this.main.camera.target.z = this.selectedRoad.j * 10;
-                                }
-                            }
-                            this.setSelectedRoad(road);
-                        }
-                        else {
-                            this.setSelectedRoad(undefined);
-                        }
+
+    private _onPointerDown = () => {
+        let pickInfo = this.main.scene.pick(this.main.scene.pointerX, this.main.scene.pointerY);
+        if (pickInfo && pickInfo.pickedPoint) {
+            this._pointerDownPos.copyFrom(pickInfo.pickedPoint);
+        }
+    }
+
+    private _onPointerUp = () => {
+        let pickInfo = this.main.scene.pick(this.main.scene.pointerX, this.main.scene.pointerY);
+        if (pickInfo && pickInfo.pickedPoint) {
+            let deltaPos = BABYLON.Vector3.DistanceSquared(pickInfo.pickedPoint, this._pointerDownPos);
+            if (deltaPos < 0.5 * 0.5) {
+                let pickedMesh = pickInfo.pickedMesh;
+                if (pickedMesh === this.turnRoadLeftButton) {
+                    if (this.selectedRoad) {
+                        this.selectedRoad.r = (this.selectedRoad.r - 1 + 4) % 4;
                     }
                 }
-                this._lastPointerUpTime = performance.now();
+                else if (pickedMesh === this.turnRoadRightButton) {
+                    if (this.selectedRoad) {
+                        this.selectedRoad.r = (this.selectedRoad.r + 1 + 4) % 4;
+                    }
+                }
+                else {
+                    let road = this.main.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
+                    if (road) {
+                        if (this.selectedRoad && road === this.selectedRoad) {
+                            if (performance.now() - this._lastPointerUpTime < 200) {
+                                this.main.camera.target.x = this.selectedRoad.i * 10;
+                                this.main.camera.target.z = this.selectedRoad.j * 10;
+                            }
+                        }
+                        this.setSelectedRoad(road);
+                    }
+                    else {
+                        this.setSelectedRoad(undefined);
+                    }
+                }
+            }
+            else {
+                if (this.draggedRoadType != RoadType.None) {
+                    let road = this.main.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
+                    if (road) {
+                        road.setRoadType(this.draggedRoadType);
+                    }
+                    this.setSelectedRoad(road);
+                }
             }
         }
+        this._lastPointerUpTime = performance.now();
+        this.draggedRoadType = RoadType.None;
     }
 
     private _update = () => {

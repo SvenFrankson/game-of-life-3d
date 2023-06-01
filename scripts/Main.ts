@@ -59,7 +59,7 @@ class Main {
         this.roads = [];
         for (let i = 0; i < MAX_ROAD_SIZE; i++) {
             for (let j = 0; j < MAX_ROAD_SIZE; j++) {
-                this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.roadManager, this.scene, RoadType.None);
+                this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.roadManager, this.scene, RoadType.Empty);
                 this.roads[i + MAX_ROAD_SIZE * j].instantiate();
             }
         }
