@@ -1,4 +1,4 @@
-class RoadManager {
+class RoadMeshManager {
 
     public roadMeshes: Map<string, BABYLON.Mesh> = new Map<string, BABYLON.Mesh>();
 

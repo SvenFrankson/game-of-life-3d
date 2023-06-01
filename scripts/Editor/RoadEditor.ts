@@ -31,6 +31,7 @@ class RoadEditor {
                         this.selectedRoad.dir = this.lastUsedDirection;
                     }
                     this.selectedRoad.setRoadType(roadType);
+                    this.main.level.saveToLocalStorage();
                 }
                 this.draggedRoadType = RoadType.None;
             });
@@ -110,16 +111,18 @@ class RoadEditor {
                     if (this.selectedRoad) {
                         this.selectedRoad.dir = (this.selectedRoad.dir - 1 + 4) % 4;
                         this.lastUsedDirection = this.selectedRoad.dir;
+                        this.main.level.saveToLocalStorage();
                     }
                 }
                 else if (pickedMesh === this.turnRoadRightButton) {
                     if (this.selectedRoad) {
                         this.selectedRoad.dir = (this.selectedRoad.dir + 1 + 4) % 4;
                         this.lastUsedDirection = this.selectedRoad.dir;
+                        this.main.level.saveToLocalStorage();
                     }
                 }
                 else {
-                    let road = this.main.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
+                    let road = this.main.level.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
                     if (road) {
                         if (this.selectedRoad && road === this.selectedRoad) {
                             if (performance.now() - this._lastPointerUpTime < 200) {
@@ -136,12 +139,13 @@ class RoadEditor {
             }
             else {
                 if (this.draggedRoadType != RoadType.None) {
-                    let road = this.main.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
+                    let road = this.main.level.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
                     if (road) {
                         if (road.roadType === RoadType.Empty) {
                             road.dir = this.lastUsedDirection;
                         }
                         road.setRoadType(this.draggedRoadType);
+                        this.main.level.saveToLocalStorage();
                     }
                     this.setSelectedRoad(road);
                 }

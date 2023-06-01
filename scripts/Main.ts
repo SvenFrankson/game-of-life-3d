@@ -16,8 +16,9 @@ class Main {
     public static TestGreenMaterial: ToonMaterial;
     public static TestBlueMaterial: ToonMaterial;
 
-    public roads: Road[];
-    public roadManager: RoadManager;
+    public roadManager: RoadMeshManager;
+
+    public level: Level;
 
     constructor(canvasElement: string) {
         Main.Instance = this;
@@ -53,16 +54,12 @@ class Main {
         this.camera.attachControl();
         OutlinePostProcess.AddOutlinePostProcess(this.camera);
 
-        this.roadManager = new RoadManager();
+        this.roadManager = new RoadMeshManager();
         await this.roadManager.initialize();
 
-        this.roads = [];
-        for (let i = 0; i < MAX_ROAD_SIZE; i++) {
-            for (let j = 0; j < MAX_ROAD_SIZE; j++) {
-                this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.roadManager, this.scene, RoadType.Empty);
-                this.roads[i + MAX_ROAD_SIZE * j].instantiate();
-            }
-        }
+        this.level = new Level(this);
+        this.level.loadFromLocalStorage();
+        this.level.instantiate();
 
         let building = new Prop("building-bordeaux");
         building.position.y += 0.2;

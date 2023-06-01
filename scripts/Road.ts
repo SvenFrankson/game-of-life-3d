@@ -28,7 +28,7 @@ class Road {
 
     public mesh: BABYLON.Mesh;
 
-    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.Empty) {
+    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadMeshManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.Empty) {
         this._ident = Road.MakeNewIdent();
         this._roadType = modelName;
     }
