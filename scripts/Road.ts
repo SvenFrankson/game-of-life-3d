@@ -6,13 +6,13 @@ class Road {
         return Road._Ident;
     }
 
-    public get r(): number {
+    public get dir(): number {
         return this._r;
     }
-    public set r(v: number) {
+    public set dir(v: number) {
         this._r = v;
         if (this.mesh) {
-            this.mesh.rotation.y = Math.PI / 2 * this.r;
+            this.mesh.rotation.y = Math.PI / 2 * this.dir;
         }
     }
 
@@ -50,7 +50,7 @@ class Road {
         this.mesh.position.x = this.i * 10;
         this.mesh.position.y = 0;
         this.mesh.position.z = this.j * 10;
-        this.mesh.rotation.y = Math.PI / 2 * this.r;
+        this.mesh.rotation.y = Math.PI / 2 * this.dir;
 
         this._instantiated = true;
     }

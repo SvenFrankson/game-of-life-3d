@@ -4,6 +4,8 @@ class RoadEditor {
 
     public selectedRoad: Road;
     public draggedRoadType: RoadType = RoadType.Empty;
+    public lastUsedDirection: number = 0;
+
     public roadSelector: BABYLON.Mesh;
     public selectedRoadButtonsContainer: BABYLON.Mesh;
     public turnRoadLeftButton: BABYLON.Mesh;
@@ -25,6 +27,9 @@ class RoadEditor {
             this.roadEditionMenu.appendChild(roadEditionButton);
             roadEditionButton.addEventListener("pointerup", () => {
                 if (this.selectedRoad) {
+                    if (this.selectedRoad.roadType === RoadType.Empty) {
+                        this.selectedRoad.dir = this.lastUsedDirection;
+                    }
                     this.selectedRoad.setRoadType(roadType);
                 }
                 this.draggedRoadType = RoadType.None;
@@ -103,12 +108,14 @@ class RoadEditor {
                 let pickedMesh = pickInfo.pickedMesh;
                 if (pickedMesh === this.turnRoadLeftButton) {
                     if (this.selectedRoad) {
-                        this.selectedRoad.r = (this.selectedRoad.r - 1 + 4) % 4;
+                        this.selectedRoad.dir = (this.selectedRoad.dir - 1 + 4) % 4;
+                        this.lastUsedDirection = this.selectedRoad.dir;
                     }
                 }
                 else if (pickedMesh === this.turnRoadRightButton) {
                     if (this.selectedRoad) {
-                        this.selectedRoad.r = (this.selectedRoad.r + 1 + 4) % 4;
+                        this.selectedRoad.dir = (this.selectedRoad.dir + 1 + 4) % 4;
+                        this.lastUsedDirection = this.selectedRoad.dir;
                     }
                 }
                 else {
@@ -131,6 +138,9 @@ class RoadEditor {
                 if (this.draggedRoadType != RoadType.None) {
                     let road = this.main.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
                     if (road) {
+                        if (road.roadType === RoadType.Empty) {
+                            road.dir = this.lastUsedDirection;
+                        }
                         road.setRoadType(this.draggedRoadType);
                     }
                     this.setSelectedRoad(road);
