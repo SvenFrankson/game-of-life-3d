@@ -156,3 +156,20 @@ html, body {
 	margin: 2px;
 	user-select: none;
 }
+
+#add-prop-button {
+	position: fixed;
+	bottom: 10px;
+	left: 10px;
+	z-index: 1;
+}
+
+.edition-button {
+	width: 80px;
+	height: 80px;
+	border: 1px solid black;
+	background-color: white;
+	text-align: center;
+	margin: 2px;
+	user-select: none;
+}

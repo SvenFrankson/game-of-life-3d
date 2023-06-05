@@ -74,7 +74,7 @@ class Main {
         tree.rotation.y = Math.PI / 2;
         tree.instantiate();
 
-        let roadEditor = new RoadEditor(this);
+        let roadEditor = new GameEditor(this);
         roadEditor.initialize();
 	}
 
