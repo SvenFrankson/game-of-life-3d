@@ -9,7 +9,8 @@ class Main {
 	public canvas: HTMLCanvasElement;
 	public engine: BABYLON.Engine;
     public scene: BABYLON.Scene;
-    public camera: BABYLON.ArcRotateCamera;
+    public camera: MyCamera;
+    public animateCamera = AnimationFactory.EmptyVector3Callback;
     public light: BABYLON.HemisphericLight;
 
     public static TestRedMaterial: ToonMaterial;
@@ -49,10 +50,12 @@ class Main {
 
         this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(- 1, 3, 2)).normalize(), this.scene);
 
-        this.camera = new BABYLON.ArcRotateCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
+        this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
         this.camera.setPosition(new BABYLON.Vector3(30, 30, -10));
         this.camera.attachControl();
+        this.camera.getScene();
         OutlinePostProcess.AddOutlinePostProcess(this.camera);
+        this.animateCamera = AnimationFactory.CreateVector3(this.camera, this.camera, "target");
 
         this.roadManager = new RoadMeshManager();
         await this.roadManager.initialize();

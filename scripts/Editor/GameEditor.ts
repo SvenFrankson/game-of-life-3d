@@ -167,8 +167,14 @@ class GameEditor {
                     if (road) {
                         if (this.selectedItem && road === this.selectedItem) {
                             if (performance.now() - this._lastPointerUpTime < 200) {
-                                this.main.camera.target.x = this.selectedItem.i * 10;
-                                this.main.camera.target.z = this.selectedItem.j * 10;
+                                this.main.animateCamera(
+                                    new BABYLON.Vector3(
+                                        this.selectedItem.i * 10,
+                                        0,
+                                        this.selectedItem.j * 10
+                                    ),
+                                    0.5
+                                );
                             }
                         }
                         this.setSelectedItem(road);
