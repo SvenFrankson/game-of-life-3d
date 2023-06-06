@@ -3,7 +3,8 @@ class PropsData {
     public static List: string[] = [
         "building-bordeaux",
         "potted-plant",
-        "street-tree-1"
+        "street-tree-1",
+        "traffic-light"
     ];
 }
 
