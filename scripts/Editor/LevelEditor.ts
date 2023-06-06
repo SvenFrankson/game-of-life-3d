@@ -6,6 +6,7 @@ class LevelEditor {
 
     public selectedItem: Road | Prop;
     public draggedRoadType: RoadType = RoadType.Empty;
+    public draggedProp: Prop;
     public lastUsedDirection: number = 0;
 
     public roadSelector: BABYLON.Mesh;
@@ -103,6 +104,7 @@ class LevelEditor {
 
         this.main.scene.onBeforeRenderObservable.add(this._update);
         this.main.canvas.addEventListener("pointerdown", this._onPointerDown);
+        this.main.canvas.addEventListener("pointermove", this._onPointerMove);
         this.main.canvas.addEventListener("pointerup", this._onPointerUp);
 
         this.showRoadMenu();
@@ -140,6 +142,16 @@ class LevelEditor {
         }
     }
 
+    public setDraggedProp(prop: Prop): void {
+        this.draggedProp = prop;
+        if (this.draggedProp) {
+            this.main.camera.detachControl();
+        }
+        else {
+            this.main.camera.attachControl();
+        }
+    }
+
     private _pointerDownPos: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     private _lastPointerUpTime: number = 0;
 
@@ -147,10 +159,49 @@ class LevelEditor {
         let pickInfo = this.main.scene.pick(this.main.scene.pointerX, this.main.scene.pointerY);
         if (pickInfo && pickInfo.pickedPoint) {
             this._pointerDownPos.copyFrom(pickInfo.pickedPoint);
+
+            // Case Prop
+            let prop = this.main.level.props.find(p => { return p === pickInfo.pickedMesh.parent; });
+            if (prop) {
+                // Case picking already selected Prop
+                if (this.selectedItem && prop === this.selectedItem) {
+                    // Case re click selected Prop
+                    if (performance.now() - this._lastPointerUpTime > 200) {
+                        this.setDraggedProp(this.selectedItem);
+                    }
+                }
+                this.setSelectedItem(prop);
+            }
+        }
+    }
+
+    
+    private _onPointerMove = () => {
+        if (this.draggedProp) {
+            // Pick any mesh which is not the dragged prop.
+            let pickInfo = this.main.scene.pick(
+                this.main.scene.pointerX,
+                this.main.scene.pointerY,
+                (mesh) => {
+                    if (mesh.parent === this.draggedProp) {
+                        return false;
+                    }
+                    return true;
+                }
+            );
+
+            if (pickInfo && pickInfo.pickedPoint) {
+                this.draggedProp.position.x = pickInfo.pickedPoint.x;
+                this.draggedProp.position.y = pickInfo.pickedPoint.y;
+                this.draggedProp.position.z = pickInfo.pickedPoint.z;
+            }
         }
     }
 
     private _onPointerUp = () => {
+        // Exit Prop drag mode.
+        this.setDraggedProp(undefined);
+
         let pickInfo = this.main.scene.pick(this.main.scene.pointerX, this.main.scene.pointerY);
         if (pickInfo && pickInfo.pickedPoint) {
             let deltaPos = BABYLON.Vector3.DistanceSquared(pickInfo.pickedPoint, this._pointerDownPos);
@@ -171,7 +222,7 @@ class LevelEditor {
                     }
                 }
                 else {
-                    // Check case Select Road
+                    // Case Select Road
                     let road = this.main.level.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
                     if (road) {
                         if (this.selectedItem && road === this.selectedItem) {
@@ -189,10 +240,12 @@ class LevelEditor {
                         this.setSelectedItem(road);
                     }
                     else {
-                        // Check case Select Prop
+                        // Case Select Prop
                         let prop = this.main.level.props.find(p => { return p === pickInfo.pickedMesh.parent; });
                         if (prop) {
+                            // Case picking already selected Prop
                             if (this.selectedItem && prop === this.selectedItem) {
+                                // Case double-click selected Prop
                                 if (performance.now() - this._lastPointerUpTime < 200) {
                                     this.main.animateCamera(
                                         new BABYLON.Vector3(
