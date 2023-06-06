@@ -62,7 +62,7 @@ class Main {
 
         this.level = new Level(this);
         this.level.loadFromLocalStorage();
-        this.level.instantiate();
+        await this.level.instantiate();
 
         let building = new Prop("building-bordeaux", this.level);
         building.position.y += 0.2;

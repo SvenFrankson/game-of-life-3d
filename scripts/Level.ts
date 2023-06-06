@@ -1,10 +1,31 @@
+interface IVector3 {
+    x: number;
+    y: number;
+    z: number;
+}
+
+function BABYLONVector3ToIVector3(v: BABYLON.Vector3): IVector3 {
+    return {
+        x: v.x,
+        y: v.y,
+        z: v.z,
+    }
+}
+
 interface IRoadData {
     roadType: number;
     dir: number;
 }
 
+interface IPropData {
+    modelName: string;
+    position: IVector3;
+    dir: number;
+}
+
 interface ILevelData {
-    roads: IRoadData[];
+    roads?: IRoadData[];
+    props?: IPropData[];
 }
 
 class Level {
@@ -21,11 +42,15 @@ class Level {
         }
     }
 
-    public instantiate(): void {
+    public async instantiate(): Promise<void> {
         for (let i = 0; i < MAX_ROAD_SIZE; i++) {
             for (let j = 0; j < MAX_ROAD_SIZE; j++) {
                 this.roads[i + MAX_ROAD_SIZE * j].instantiate();
             }
+        }
+
+        for (let i = 0; i < this.props.length; i++) {
+            await this.props.get(i).instantiate();
         }
     }
 
@@ -36,22 +61,49 @@ class Level {
                 let roadData: IRoadData = {
                     roadType: this.roads[i + MAX_ROAD_SIZE * j].roadType,
                     dir: this.roads[i + MAX_ROAD_SIZE * j].dir
-                }
+                };
                 roadsData[i + MAX_ROAD_SIZE * j] = roadData;
             }
         }
 
+        let propsData: IPropData[] = [];
+        for (let i = 0; i < this.props.length; i++) {
+            let prop = this.props.get(i);
+            let propData: IPropData = {
+                modelName: prop.modelName,
+                position: BABYLONVector3ToIVector3(prop.position),
+                dir: prop.rotation.y
+            };
+            propsData[i] = propData;
+        }
+
         return {
-            roads: roadsData
+            roads: roadsData,
+            props: propsData
         };
     }
 
     public deserializeInPlace(data: ILevelData): void {
-        for (let i = 0; i < MAX_ROAD_SIZE; i++) {
-            for (let j = 0; j < MAX_ROAD_SIZE; j++) {
-                let roadData = data.roads[i + MAX_ROAD_SIZE * j];
-                this.roads[i + MAX_ROAD_SIZE * j].setRoadType(roadData.roadType);
-                this.roads[i + MAX_ROAD_SIZE * j].dir = roadData.dir;
+        if (data) {
+            if (data.roads) {
+                for (let i = 0; i < MAX_ROAD_SIZE; i++) {
+                    for (let j = 0; j < MAX_ROAD_SIZE; j++) {
+                        let roadData = data.roads[i + MAX_ROAD_SIZE * j];
+                        this.roads[i + MAX_ROAD_SIZE * j].setRoadType(roadData.roadType);
+                        this.roads[i + MAX_ROAD_SIZE * j].dir = roadData.dir;
+                    }
+                }
+            }
+    
+            if (data.props) {
+                for (let i = 0; i < data.props.length; i++) {
+                    let propData = data.props[i];
+                    let prop = new Prop(propData.modelName, this);
+                    prop.position.x = propData.position.x;
+                    prop.position.y = propData.position.y;
+                    prop.position.z = propData.position.z;
+                    prop.rotation.y = propData.dir;
+                }
             }
         }
     }

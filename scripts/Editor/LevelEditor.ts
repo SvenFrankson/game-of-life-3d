@@ -5,7 +5,7 @@ class LevelEditor {
     public addPropButton: HTMLDivElement;
 
     public selectedItem: Road | Prop;
-    public draggedRoadType: RoadType = RoadType.Empty;
+    public draggedRoadType: RoadType = RoadType.None;
     public draggedProp: Prop;
     public lastUsedDirection: number = 0;
 
@@ -143,7 +143,12 @@ class LevelEditor {
     }
 
     public setDraggedProp(prop: Prop): void {
+        if (this.draggedProp && !prop) {
+            this.main.level.saveToLocalStorage();
+        }
+
         this.draggedProp = prop;
+        
         if (this.draggedProp) {
             this.main.camera.detachControl();
         }
