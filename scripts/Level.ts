@@ -10,6 +10,7 @@ interface ILevelData {
 class Level {
 
     public roads: Road[];
+    public props: UniqueList<Prop> = new UniqueList<Prop>();
 
     constructor(public main: Main) {
         this.roads = [];

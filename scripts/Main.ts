@@ -64,20 +64,20 @@ class Main {
         this.level.loadFromLocalStorage();
         this.level.instantiate();
 
-        let building = new Prop("building-bordeaux");
+        let building = new Prop("building-bordeaux", this.level);
         building.position.y += 0.2;
         building.position.x += 8;
         building.rotation.y = Math.PI / 2;
         building.instantiate();
 
-        let tree = new Prop("street-tree-1");
+        let tree = new Prop("street-tree-1", this.level);
         tree.position.y += 0.2;
         tree.position.x -= 4.5;
         tree.position.z += 4.5;
         tree.rotation.y = Math.PI / 2;
         tree.instantiate();
 
-        let roadEditor = new GameEditor(this);
+        let roadEditor = new LevelEditor(this);
         roadEditor.initialize();
 	}
 

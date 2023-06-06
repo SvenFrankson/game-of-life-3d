@@ -19,10 +19,11 @@ class Prop extends BABYLON.Mesh {
         return this.getScene();
     }
 
-    constructor(private _modelName: string) {
+    constructor(private _modelName: string, public level: Level) {
         super("");
         this._ident = Prop.MakeNewIdent();
         this.name = this._modelName + "-" + this._ident.toFixed(0);
+        this.level.props.push(this);
     }
 
     private _instantiated = false;
@@ -49,6 +50,20 @@ class Prop extends BABYLON.Mesh {
                 resolve();
             });
         });
+    }
+
+    public highlight(): void {
+        this.getChildMeshes().forEach(mesh => {
+            mesh.renderOutline = true;
+            mesh.outlineWidth = 0.1;
+            mesh.outlineColor.copyFromFloats(0, 1, 1);
+        })
+    }
+
+    public unlit(): void {
+        this.getChildMeshes().forEach(mesh => {
+            mesh.renderOutline = false;
+        })
     }
 
     public async setModelName(modelName: string): Promise<void> {

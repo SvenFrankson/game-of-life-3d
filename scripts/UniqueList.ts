@@ -37,6 +37,10 @@ class UniqueList<T> {
         return this._elements.indexOf(e) != - 1;
     }
 
+    public find(callback: (e: T) => boolean): T {
+        return this._elements.find(callback);
+    }
+
     public forEach(callback: (e: T) => void): void {
         this._elements.forEach(e => {
             callback(e);

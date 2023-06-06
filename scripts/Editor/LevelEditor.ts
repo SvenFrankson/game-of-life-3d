@@ -1,4 +1,4 @@
-class GameEditor {
+class LevelEditor {
 
     public propEditionMenu: HTMLDivElement;
     public roadEditionMenu: HTMLDivElement;
@@ -109,26 +109,34 @@ class GameEditor {
     }
 
     public setSelectedItem(item: Road | Prop): void {
-        this.selectedItem = item;
+        if (this.selectedItem != item) {
+            if (this.selectedItem instanceof Prop) {
+                this.selectedItem.unlit();
+            }
 
-        if (this.selectedItem instanceof Road) {
-            this.roadSelector.isVisible = true;
-            this.roadSelector.position.x = this.selectedItem.i * 10;
-            this.roadSelector.position.z = this.selectedItem.j * 10;
+            this.selectedItem = item;
+    
+            if (this.selectedItem instanceof Road) {
+                this.roadSelector.isVisible = true;
+                this.roadSelector.position.x = this.selectedItem.i * 10;
+                this.roadSelector.position.z = this.selectedItem.j * 10;
+    
+                this.selectedRoadButtonsContainer.isVisible = true;
+                this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = true; });
+                this.selectedRoadButtonsContainer.position.copyFrom(this.roadSelector.position);
+    
+                this.showRoadMenu();
+            }
+            else {
+                this.roadSelector.isVisible = false;
+                this.selectedRoadButtonsContainer.isVisible = false;
+                this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = false; });
+            }
 
-            this.selectedRoadButtonsContainer.isVisible = true;
-            this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = true; });
-            this.selectedRoadButtonsContainer.position.copyFrom(this.roadSelector.position);
-
-            this.showRoadMenu();
-        }
-        else if (this.selectedItem instanceof Prop) {
-            this.showPropMenu();
-        }
-        else {
-            this.roadSelector.isVisible = false;
-            this.selectedRoadButtonsContainer.isVisible = false;
-            this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = false; });
+            if (this.selectedItem instanceof Prop) {
+                this.selectedItem.highlight();
+                this.showPropMenu();
+            }
         }
     }
 
@@ -163,6 +171,7 @@ class GameEditor {
                     }
                 }
                 else {
+                    // Check case Select Road
                     let road = this.main.level.roads.find(r => { return r.mesh === pickInfo.pickedMesh; });
                     if (road) {
                         if (this.selectedItem && road === this.selectedItem) {
@@ -180,7 +189,26 @@ class GameEditor {
                         this.setSelectedItem(road);
                     }
                     else {
-                        this.setSelectedItem(undefined);
+                        // Check case Select Prop
+                        let prop = this.main.level.props.find(p => { return p === pickInfo.pickedMesh.parent; });
+                        if (prop) {
+                            if (this.selectedItem && prop === this.selectedItem) {
+                                if (performance.now() - this._lastPointerUpTime < 200) {
+                                    this.main.animateCamera(
+                                        new BABYLON.Vector3(
+                                            this.selectedItem.position.x,
+                                            0,
+                                            this.selectedItem.position.z
+                                        ),
+                                        0.5
+                                    );
+                                }
+                            }
+                            this.setSelectedItem(prop);
+                        }
+                        else {
+                            this.setSelectedItem(undefined);
+                        }
                     }
                 }
             }
