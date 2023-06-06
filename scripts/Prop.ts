@@ -26,6 +26,11 @@ class Prop extends BABYLON.Mesh {
         this.level.props.push(this);
     }
 
+    public dispose(): void {
+        this.level.props.remove(this);
+        super.dispose();
+    }
+
     private _instantiated = false;
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
@@ -64,6 +69,13 @@ class Prop extends BABYLON.Mesh {
         this.getChildMeshes().forEach(mesh => {
             mesh.renderOutline = false;
         })
+    }
+
+    public setIsVisible(isVisible: boolean): void {
+        this.isVisible = isVisible;
+        this.getChildMeshes().forEach(mesh => {
+            mesh.isVisible = isVisible;
+        });
     }
 
     public async setModelName(modelName: string): Promise<void> {

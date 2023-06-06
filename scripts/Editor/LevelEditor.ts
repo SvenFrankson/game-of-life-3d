@@ -143,10 +143,6 @@ class LevelEditor {
     }
 
     public setDraggedProp(prop: Prop): void {
-        if (this.draggedProp && !prop) {
-            this.main.level.saveToLocalStorage();
-        }
-
         this.draggedProp = prop;
         
         if (this.draggedProp) {
@@ -154,6 +150,16 @@ class LevelEditor {
         }
         else {
             this.main.camera.attachControl();
+        }
+    }
+
+    public dropDraggedProp(): void {
+        if (this.draggedProp) {
+            if (!this.draggedProp.isVisible) {
+                this.draggedProp.dispose();
+            }
+            this.setDraggedProp(undefined);
+            this.main.level.saveToLocalStorage();
         }
     }
 
@@ -196,16 +202,22 @@ class LevelEditor {
             );
 
             if (pickInfo && pickInfo.pickedPoint) {
+                this.draggedProp.setIsVisible(true);
                 this.draggedProp.position.x = pickInfo.pickedPoint.x;
                 this.draggedProp.position.y = pickInfo.pickedPoint.y;
                 this.draggedProp.position.z = pickInfo.pickedPoint.z;
+            }
+            else {
+                this.draggedProp.setIsVisible(false);
             }
         }
     }
 
     private _onPointerUp = () => {
         // Exit Prop drag mode.
-        this.setDraggedProp(undefined);
+        if (this.draggedProp) {
+            this.dropDraggedProp();
+        }
 
         let pickInfo = this.main.scene.pick(this.main.scene.pointerX, this.main.scene.pointerY);
         if (pickInfo && pickInfo.pickedPoint) {
