@@ -12,39 +12,21 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		Texture directory   :  C:\Users\svent\Documents\sven-frankson\game-of-life-3d\datas\meshes\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
-	processing begun of mesh:  medium--ground-window
-		processing begun of material:  Material
-		processing begun of material:  Material.001
-		processing begun of material:  Material.002
-		processing begun of material:  Material.003
-		processing begun of multimaterial:  building_bordeaux.Multimaterial#0
-		num positions      :  510
-		num normals        :  510
-		num tangents       :  0
-		num uvs            :  1020
-		num uvs2           :  0
-		num colors         :  0
-		num triangles      :  472
-		WARNING: # of 0 area faces found:  33
-	processing begun of mesh:  medium--ground-window.001
+	processing begun of mesh:  building-bordeaux-floor-1
 		processing begun of material:  Material
 		processing begun of material:  Material.001
 		processing begun of material:  Material.002
 		processing begun of material:  Material.003
 		processing begun of material:  Material.004
-		registered as also a user of material:  Material
-		registered as also a user of material:  Material.001
-		registered as also a user of material:  Material.002
-		registered as also a user of material:  Material.003
-		processing begun of multimaterial:  building_bordeaux.Multimaterial#1
-		num positions      :  929
-		num normals        :  929
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#0
+		num positions      :  417
+		num normals        :  417
 		num tangents       :  0
-		num uvs            :  1858
+		num uvs            :  834
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  992
-	processing begun of mesh:  medium--ground-window.002
+		num triangles      :  464
+	processing begun of mesh:  building-bordeaux-floor-no-bevel-1
 		processing begun of material:  white-wood
 		processing begun of material:  Material.002
 		processing begun of material:  Material
@@ -54,32 +36,97 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		registered as also a user of material:  Material
 		registered as also a user of material:  Material.001
 		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#1
+		num positions      :  320
+		num normals        :  320
+		num tangents       :  0
+		num uvs            :  640
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  344
+	processing begun of mesh:  building-bordeaux-ground-1
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.002
+		processing begun of material:  Material.003
+		processing begun of material:  Material.004
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material.003
+		registered as also a user of material:  Material.004
 		processing begun of multimaterial:  building_bordeaux.Multimaterial#2
-		num positions      :  420
-		num normals        :  420
+		num positions      :  480
+		num normals        :  480
 		num tangents       :  0
-		num uvs            :  840
+		num uvs            :  960
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  442
-	processing begun of mesh:  Circle
-		processing begun of material:  Material.008
-		processing begun of material:  Material.007
-		processing begun of material:  Material.006
-		processing begun of material:  Material.005
+		num triangles      :  474
+	processing begun of mesh:  building-bordeaux-floor-2
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.002
+		processing begun of material:  Material.003
+		processing begun of material:  Material.004
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material.003
+		registered as also a user of material:  Material.004
 		processing begun of multimaterial:  building_bordeaux.Multimaterial#3
-		num positions      :  163
-		num normals        :  163
+		num positions      :  485
+		num normals        :  485
 		num tangents       :  0
-		num uvs            :  326
+		num uvs            :  970
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  160
+		num triangles      :  509
+	processing begun of mesh:  building-bordeaux-roof-1
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.002
+		processing begun of material:  Material.003
+		processing begun of material:  white-wood
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material.003
+		registered as also a user of material:  white-wood
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#4
+		num positions      :  82
+		num normals        :  82
+		num tangents       :  0
+		num uvs            :  164
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  118
+	processing begun of mesh:  building-bordeaux-floor-no-bevel-2
+		processing begun of material:  white-wood
+		processing begun of material:  Material.002
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.003
+		registered as also a user of material:  white-wood
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#5
+		num positions      :  96
+		num normals        :  96
+		num tangents       :  0
+		num uvs            :  192
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  96
 ========= Writing of JSON file started =========
-	writing mesh:  medium--ground-window
-	writing mesh:  medium--ground-window.001
-	writing mesh:  medium--ground-window.002
-	writing mesh:  Circle
+	writing mesh:  building-bordeaux-floor-1
+	writing mesh:  building-bordeaux-floor-no-bevel-1
+	writing mesh:  building-bordeaux-ground-1
+	writing mesh:  building-bordeaux-floor-2
+	writing mesh:  building-bordeaux-roof-1
+	writing mesh:  building-bordeaux-floor-no-bevel-2
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.1137 secs
+elapsed time:  0 min, 0.1946 secs

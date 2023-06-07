@@ -48,7 +48,9 @@ class Prop extends BABYLON.Mesh {
                                 }
                             }
                         }
-                        mesh.parent = this;
+                        if (!mesh.parent) {
+                            mesh.parent = this;
+                        }
                     }
                 });
                 this._instantiated = true;
