@@ -21,6 +21,7 @@ interface IPropData {
     modelName: string;
     position: IVector3;
     dir: number;
+    elementIndexes?: number[];
 }
 
 interface ILevelData {
@@ -74,6 +75,9 @@ class Level {
                 position: BABYLONVector3ToIVector3(prop.position),
                 dir: prop.rotation.y
             };
+            if (prop instanceof Building) {
+                propData.elementIndexes = prop.elementIndexes;
+            }
             propsData[i] = propData;
         }
 
@@ -103,6 +107,9 @@ class Level {
                     prop.position.y = propData.position.y;
                     prop.position.z = propData.position.z;
                     prop.rotation.y = propData.dir;
+                    if (prop instanceof Building) {
+                        prop.elementIndexes = propData.elementIndexes;
+                    }
                 }
             }
         }

@@ -10,6 +10,16 @@ class Building extends Prop {
         return this.elementIndexes[this.elementIndexes.length - 1];
     }
 
+    constructor(_modelName: string, level: Level) {
+        super(_modelName, level);
+        this.elementIndexes = [1];
+        let h = Math.floor(Math.random() * 5);
+        for (let i = 0; i < h; i++) {
+            this.elementIndexes.push(Math.floor(Math.random() * 3 + 1));
+        }
+        this.elementIndexes.push(1);
+    }
+
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
             BABYLON.SceneLoader.ImportMesh("", "datas/meshes/" + this._modelName + ".babylon", "", this.scene, (meshes) => {
