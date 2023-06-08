@@ -120,6 +120,44 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		num uvs2           :  0
 		num colors         :  0
 		num triangles      :  96
+	processing begun of mesh:  building-bordeaux-floor-3
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.002
+		processing begun of material:  Material.003
+		processing begun of material:  Material.004
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material.003
+		registered as also a user of material:  Material.004
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#6
+		num positions      :  415
+		num normals        :  415
+		num tangents       :  0
+		num uvs            :  830
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  464
+	processing begun of mesh:  building-bordeaux-floor-no-bevel-3
+		processing begun of material:  white-wood
+		processing begun of material:  Material.002
+		processing begun of material:  Material
+		processing begun of material:  Material.001
+		processing begun of material:  Material.003
+		registered as also a user of material:  white-wood
+		registered as also a user of material:  Material.002
+		registered as also a user of material:  Material
+		registered as also a user of material:  Material.001
+		registered as also a user of material:  Material.003
+		processing begun of multimaterial:  building_bordeaux.Multimaterial#7
+		num positions      :  320
+		num normals        :  320
+		num tangents       :  0
+		num uvs            :  640
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  344
 ========= Writing of JSON file started =========
 	writing mesh:  building-bordeaux-floor-1
 	writing mesh:  building-bordeaux-floor-no-bevel-1
@@ -127,6 +165,8 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 	writing mesh:  building-bordeaux-floor-2
 	writing mesh:  building-bordeaux-roof-1
 	writing mesh:  building-bordeaux-floor-no-bevel-2
+	writing mesh:  building-bordeaux-floor-3
+	writing mesh:  building-bordeaux-floor-no-bevel-3
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.1946 secs
+elapsed time:  0 min, 0.1745 secs
