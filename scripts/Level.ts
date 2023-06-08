@@ -98,7 +98,7 @@ class Level {
             if (data.props) {
                 for (let i = 0; i < data.props.length; i++) {
                     let propData = data.props[i];
-                    let prop = new Prop(propData.modelName, this);
+                    let prop = Prop.Create(propData.modelName, this);
                     prop.position.x = propData.position.x;
                     prop.position.y = propData.position.y;
                     prop.position.z = propData.position.z;

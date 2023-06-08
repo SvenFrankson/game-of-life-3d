@@ -63,7 +63,7 @@ class LevelEditor {
             addPropButton.classList.add("edition-menu-button");
             addPropButton.innerText = propName;
             addPropButton.addEventListener("pointerdown", async () => {
-                let prop = new Prop(propName, this.main.level);
+                let prop = Prop.Create(propName, this.main.level);
                 await prop.instantiate();
                 prop.setIsVisible(false);
                 this.setDraggedProp(prop);

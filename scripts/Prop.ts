@@ -19,7 +19,16 @@ class Prop extends BABYLON.Mesh {
         return this.getScene();
     }
 
-    constructor(private _modelName: string, public level: Level) {
+    public static Create(modelName: string, level: Level): Prop {
+        if (modelName.startsWith("building")) {
+            return new Building(modelName, level);
+        }
+        else {
+            return new Prop(modelName, level);
+        }
+    }
+
+    constructor(protected _modelName: string, public level: Level) {
         super("");
         this._ident = Prop.MakeNewIdent();
         this.name = this._modelName + "-" + this._ident.toFixed(0);
@@ -31,7 +40,7 @@ class Prop extends BABYLON.Mesh {
         super.dispose();
     }
 
-    private _instantiated = false;
+    protected _instantiated = false;
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
             BABYLON.SceneLoader.ImportMesh("", "datas/meshes/" + this._modelName + ".babylon", "", this.scene, (meshes) => {
