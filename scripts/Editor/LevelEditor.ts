@@ -10,9 +10,9 @@ class LevelEditor {
     public lastUsedDirection: number = 0;
 
     public roadSelector: BABYLON.Mesh;
-    public selectedRoadButtonsContainer: BABYLON.Mesh;
-    public turnRoadLeftButton: BABYLON.Mesh;
-    public turnRoadRightButton: BABYLON.Mesh;
+    public selectedItemButtonsContainer: BABYLON.Mesh;
+    public turnItemLeftButton: BABYLON.Mesh;
+    public turnItemRightButton: BABYLON.Mesh;
 
     constructor(
         public main: Main
@@ -91,22 +91,22 @@ class LevelEditor {
         roadSelectorMaterial.alpha = 0.3;
         this.roadSelector.material = roadSelectorMaterial;
 
-        this.selectedRoadButtonsContainer = new BABYLON.Mesh("selected-road-button-container");
-        this.selectedRoadButtonsContainer.rotationQuaternion = BABYLON.Quaternion.Identity();
+        this.selectedItemButtonsContainer = new BABYLON.Mesh("selected-road-button-container");
+        this.selectedItemButtonsContainer.rotationQuaternion = BABYLON.Quaternion.Identity();
 
-        this.turnRoadLeftButton = BABYLON.MeshBuilder.CreateBox("turn-road-left-button", { width: 2, height: 0.5, depth: 2 });
-        this.turnRoadLeftButton.material = Main.TestBlueMaterial;
-        this.turnRoadLeftButton.position.x = - 1.5;
-        this.turnRoadLeftButton.position.y = 1;
-        this.turnRoadLeftButton.position.z = 6 * Math.SQRT2;
-        this.turnRoadLeftButton.parent = this.selectedRoadButtonsContainer;
+        this.turnItemLeftButton = BABYLON.MeshBuilder.CreateBox("turn-road-left-button", { width: 2, height: 0.5, depth: 2 });
+        this.turnItemLeftButton.material = Main.TestBlueMaterial;
+        this.turnItemLeftButton.position.x = - 1.5;
+        this.turnItemLeftButton.position.y = 1;
+        this.turnItemLeftButton.position.z = - 6 * Math.SQRT2;
+        this.turnItemLeftButton.parent = this.selectedItemButtonsContainer;
 
-        this.turnRoadRightButton = BABYLON.MeshBuilder.CreateBox("turn-road-right-button", { width: 2, height: 0.5, depth: 2 });
-        this.turnRoadRightButton.material = Main.TestBlueMaterial;
-        this.turnRoadRightButton.position.x = 1.5;
-        this.turnRoadRightButton.position.y = 1;
-        this.turnRoadRightButton.position.z = 6 * Math.SQRT2;
-        this.turnRoadRightButton.parent = this.selectedRoadButtonsContainer;
+        this.turnItemRightButton = BABYLON.MeshBuilder.CreateBox("turn-road-right-button", { width: 2, height: 0.5, depth: 2 });
+        this.turnItemRightButton.material = Main.TestBlueMaterial;
+        this.turnItemRightButton.position.x = 1.5;
+        this.turnItemRightButton.position.y = 1;
+        this.turnItemRightButton.position.z = - 6 * Math.SQRT2;
+        this.turnItemRightButton.parent = this.selectedItemButtonsContainer;
 
         this.main.scene.onBeforeRenderObservable.add(this._update);
         this.main.canvas.addEventListener("pointerdown", this._onPointerDown);
@@ -124,25 +124,33 @@ class LevelEditor {
 
             this.selectedItem = item;
     
+            if (this.selectedItem) {
+                this.selectedItemButtonsContainer.isVisible = true;
+                this.selectedItemButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = true; });
+            }
+            else {
+                this.selectedItemButtonsContainer.isVisible = false;
+                this.selectedItemButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = false; });
+            }
+
             if (this.selectedItem instanceof Road) {
                 this.roadSelector.isVisible = true;
                 this.roadSelector.position.x = this.selectedItem.i * 10;
                 this.roadSelector.position.z = this.selectedItem.j * 10;
-    
-                this.selectedRoadButtonsContainer.isVisible = true;
-                this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = true; });
-                this.selectedRoadButtonsContainer.position.copyFrom(this.roadSelector.position);
+
+                this.selectedItemButtonsContainer.position.copyFrom(this.roadSelector.position);
     
                 this.showRoadMenu();
             }
             else {
                 this.roadSelector.isVisible = false;
-                this.selectedRoadButtonsContainer.isVisible = false;
-                this.selectedRoadButtonsContainer.getChildMeshes().forEach(child => { child.isVisible = false; });
             }
 
             if (this.selectedItem instanceof Prop) {
                 this.selectedItem.highlight();
+
+                this.selectedItemButtonsContainer.position.copyFrom(this.selectedItem.position);
+
                 this.showPropMenu();
             }
         }
@@ -230,18 +238,22 @@ class LevelEditor {
             let deltaPos = BABYLON.Vector3.DistanceSquared(pickInfo.pickedPoint, this._pointerDownPos);
             if (deltaPos < 0.5 * 0.5) {
                 let pickedMesh = pickInfo.pickedMesh;
-                if (pickedMesh === this.turnRoadLeftButton) {
-                    if (this.selectedItem instanceof Road) {
-                        this.selectedItem.dir = (this.selectedItem.dir - 1 + 4) % 4;
-                        this.lastUsedDirection = this.selectedItem.dir;
-                        this.main.level.saveToLocalStorage();
+                if (pickedMesh === this.turnItemLeftButton) {
+                    if (this.selectedItem) {
+                        this.selectedItem.animateDir(Math.ceil(this.selectedItem.dir + 1), 0.3).then(() => {
+                            this.selectedItem.dir = Math.floor((this.selectedItem.dir + 4) % 4);
+                            this.lastUsedDirection = this.selectedItem.dir;
+                            this.main.level.saveToLocalStorage();
+                        });
                     }
                 }
-                else if (pickedMesh === this.turnRoadRightButton) {
-                    if (this.selectedItem instanceof Road) {
-                        this.selectedItem.dir = (this.selectedItem.dir + 1 + 4) % 4;
-                        this.lastUsedDirection = this.selectedItem.dir;
-                        this.main.level.saveToLocalStorage();
+                else if (pickedMesh === this.turnItemRightButton) {
+                    if (this.selectedItem) {
+                        this.selectedItem.animateDir(Math.floor(this.selectedItem.dir - 1), 0.3).then(() => {
+                            this.selectedItem.dir = Math.floor((this.selectedItem.dir + 4) % 4);
+                            this.lastUsedDirection = this.selectedItem.dir;
+                            this.main.level.saveToLocalStorage();
+                        });
                     }
                 }
                 else {
@@ -315,7 +327,7 @@ class LevelEditor {
             let dir = this.main.camera.getDirection(BABYLON.Axis.Z);
             dir.y = 0;
             
-            VMath.QuaternionFromZXAxisToRef(dir, right, this.selectedRoadButtonsContainer.rotationQuaternion);
+            VMath.QuaternionFromZXAxisToRef(dir, right, this.selectedItemButtonsContainer.rotationQuaternion);
         }
     }
 }

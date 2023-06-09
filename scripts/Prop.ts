@@ -15,6 +15,16 @@ class Prop extends BABYLON.Mesh {
         return this._modelName;
     }
 
+    private _dir: number = 0;
+    public get dir(): number {
+        return this._dir;
+    }
+    public set dir(v: number) {
+        this._dir = v;
+        this.rotation.y = Math.PI / 2 * this.dir;
+    }
+    public animateDir = AnimationFactory.EmptyNumberCallback;
+
     public get scene(): BABYLON.Scene {
         return this.getScene();
     }
@@ -33,6 +43,8 @@ class Prop extends BABYLON.Mesh {
         this._ident = Prop.MakeNewIdent();
         this.name = this._modelName + "-" + this._ident.toFixed(0);
         this.level.props.push(this);
+
+        this.animateDir = AnimationFactory.CreateNumber(this, this, "dir");
     }
 
     public dispose(): void {

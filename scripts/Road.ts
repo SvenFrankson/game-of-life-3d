@@ -7,14 +7,15 @@ class Road {
     }
 
     public get dir(): number {
-        return this._r;
+        return this._dir;
     }
     public set dir(v: number) {
-        this._r = v;
+        this._dir = v;
         if (this.mesh) {
             this.mesh.rotation.y = Math.PI / 2 * this.dir;
         }
     }
+    public animateDir = AnimationFactory.EmptyNumberCallback;
 
     private _ident: number;
     public get ident(): number {
@@ -28,7 +29,7 @@ class Road {
 
     public mesh: BABYLON.Mesh;
 
-    constructor(public i: number, public j: number, private _r: number, public roadManager: RoadMeshManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.Empty) {
+    constructor(public i: number, public j: number, private _dir: number, public roadManager: RoadMeshManager, public scene: BABYLON.Scene, modelName: RoadType = RoadType.Empty) {
         this._ident = Road.MakeNewIdent();
         this._roadType = modelName;
     }
@@ -46,6 +47,7 @@ class Road {
         else {
             this.mesh = BABYLON.MeshBuilder.CreateBox("empty-road", { width: 9.5, height: 0.2, depth: 9.5 });
         }
+        this.animateDir = AnimationFactory.CreateNumber(this, this, "dir");
 
         this.mesh.position.x = this.i * 10;
         this.mesh.position.y = 0;

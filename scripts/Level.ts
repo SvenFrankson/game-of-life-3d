@@ -73,7 +73,7 @@ class Level {
             let propData: IPropData = {
                 modelName: prop.modelName,
                 position: BABYLONVector3ToIVector3(prop.position),
-                dir: prop.rotation.y
+                dir: prop.dir
             };
             if (prop instanceof Building) {
                 propData.elementIndexes = prop.elementIndexes;
@@ -106,7 +106,7 @@ class Level {
                     prop.position.x = propData.position.x;
                     prop.position.y = propData.position.y;
                     prop.position.z = propData.position.z;
-                    prop.rotation.y = propData.dir;
+                    prop.dir = propData.dir;
                     if (prop instanceof Building) {
                         prop.elementIndexes = propData.elementIndexes;
                     }
