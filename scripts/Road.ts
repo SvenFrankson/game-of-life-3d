@@ -1,4 +1,4 @@
-class Road {
+class Road implements ISelectableItem {
 
     private static _Ident: number = 0;
     public static MakeNewIdent(): number {

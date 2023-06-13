@@ -1,4 +1,11 @@
-class Prop extends BABYLON.Mesh {
+interface ISelectableItem {
+
+    dir: number;
+    
+    animateDir: (dir: number, duration: number) => Promise<void>;
+}
+
+class Prop extends BABYLON.Mesh implements ISelectableItem {
 
     private static _Ident: number = 0;
     public static MakeNewIdent(): number {

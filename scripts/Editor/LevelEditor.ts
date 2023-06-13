@@ -4,7 +4,7 @@ class LevelEditor {
     public roadEditionMenu: HTMLDivElement;
     public addPropButton: HTMLDivElement;
 
-    public selectedItem: Road | Prop;
+    public selectedItem: ISelectableItem;
     public draggedRoadType: RoadType = RoadType.None;
     public draggedProp: Prop;
     public lastUsedDirection: number = 0;
@@ -116,7 +116,7 @@ class LevelEditor {
         this.showRoadMenu();
     }
 
-    public setSelectedItem(item: Road | Prop): void {
+    public setSelectedItem(item: ISelectableItem): void {
         if (this.selectedItem != item) {
             if (this.selectedItem instanceof Prop) {
                 this.selectedItem.unlit();
@@ -192,7 +192,7 @@ class LevelEditor {
                 if (this.selectedItem && prop === this.selectedItem) {
                     // Case re click selected Prop
                     if (performance.now() - this._lastPointerUpTime > 200) {
-                        this.setDraggedProp(this.selectedItem);
+                        this.setDraggedProp(prop);
                     }
                 }
                 this.setSelectedItem(prop);
@@ -264,9 +264,9 @@ class LevelEditor {
                             if (performance.now() - this._lastPointerUpTime < 200) {
                                 this.main.animateCamera(
                                     new BABYLON.Vector3(
-                                        this.selectedItem.i * 10,
+                                        road.i * 10,
                                         0,
-                                        this.selectedItem.j * 10
+                                        road.j * 10
                                     ),
                                     0.5
                                 );
@@ -284,9 +284,9 @@ class LevelEditor {
                                 if (performance.now() - this._lastPointerUpTime < 200) {
                                     this.main.animateCamera(
                                         new BABYLON.Vector3(
-                                            this.selectedItem.position.x,
+                                            prop.position.x,
                                             0,
-                                            this.selectedItem.position.z
+                                            prop.position.z
                                         ),
                                         0.5
                                     );
