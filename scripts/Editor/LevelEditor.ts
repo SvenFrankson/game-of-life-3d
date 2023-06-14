@@ -161,6 +161,7 @@ class LevelEditor {
         
         if (this.draggedProp) {
             this.main.camera.detachControl();
+            this._movingPropOffset = undefined;
             this.main.scene.onBeforeRenderObservable.add(this._draggingUpdate);
         }
         else {
@@ -203,6 +204,7 @@ class LevelEditor {
     }
 
     private _movingProp: Prop;
+    private _movingPropOffset: BABYLON.Vector3;
     private _draggingUpdate = () => {
         if (this.draggedProp) {
             // Pick any mesh which is not the dragged prop.
@@ -217,13 +219,17 @@ class LevelEditor {
                 }
             );
 
+            if (!this._movingPropOffset) {
+                this._movingPropOffset = this.draggedProp.position.subtract(pickInfo.pickedPoint);
+            }
+
             if (pickInfo && pickInfo.pickedPoint) {
                 this.draggedProp.setIsVisible(true);
                 if (!this._movingProp) {
                     let newPos = new BABYLON.Vector3(
-                        Math.round(pickInfo.pickedPoint.x),
-                        pickInfo.pickedPoint.y,
-                        Math.round(pickInfo.pickedPoint.z)
+                        Math.round(pickInfo.pickedPoint.x + this._movingPropOffset.x),
+                        pickInfo.pickedPoint.y + this._movingPropOffset.y,
+                        Math.round(pickInfo.pickedPoint.z + this._movingPropOffset.z)
                     );
                     if (BABYLON.Vector3.DistanceSquared(this.draggedProp.position, newPos) > 0.001 * 0.001) {
                         this._movingProp = this.draggedProp;
