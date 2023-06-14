@@ -22,6 +22,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
         return this._modelName;
     }
 
+    public animatePos = AnimationFactory.EmptyVector3Callback;
     private _dir: number = 0;
     public get dir(): number {
         return this._dir;
@@ -52,6 +53,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
         this.level.props.push(this);
 
         this.animateDir = AnimationFactory.CreateNumber(this, this, "dir");
+        this.animatePos = AnimationFactory.CreateVector3(this, this, "position");
     }
 
     public dispose(): void {

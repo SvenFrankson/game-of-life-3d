@@ -42,13 +42,13 @@ class Building extends Prop {
 
                 let groundMeshBase = meshes.find(m => { return m.name === this._modelName + "-ground-" + this.groundIndex.toFixed(0); });
                 if (groundMeshBase instanceof BABYLON.Mesh) {
-                    let mesh = groundMeshBase.clone();
+                    let mesh = groundMeshBase.clone(undefined, undefined, true);
                     mesh.position.copyFromFloats(0, 0, 0);
                     mesh.parent = this;
 
                     groundMeshBase.getChildMeshes().forEach(groundMeshChildBase => {
                         if (groundMeshChildBase instanceof BABYLON.Mesh) {
-                            let mesh = groundMeshChildBase.clone();
+                            let mesh = groundMeshChildBase.clone(undefined, undefined, true);
                             mesh.position.copyFromFloats(0, 0, 0);
                             mesh.parent = this;
                         }
@@ -61,13 +61,13 @@ class Building extends Prop {
                     if (floorMeshBase instanceof BABYLON.Mesh) {
                         let y = 2.7 + 3 * (n - 1);
 
-                        let mesh = floorMeshBase.clone();
+                        let mesh = floorMeshBase.clone(undefined, undefined, true);
                         mesh.position.copyFromFloats(0, y, 0);
                         mesh.parent = this;
 
                         floorMeshBase.getChildMeshes().forEach(floorMeshChildBase => {
                             if (floorMeshChildBase instanceof BABYLON.Mesh) {
-                                let mesh = floorMeshChildBase.clone();
+                                let mesh = floorMeshChildBase.clone(undefined, undefined, true);
                                 mesh.position.copyFromFloats(0, y, 0);
                                 mesh.parent = this;
                             }
@@ -79,13 +79,13 @@ class Building extends Prop {
                 if (roofMeshBase instanceof BABYLON.Mesh) {
                     let y = 2.7 + 3 * (this.elementIndexes.length - 2);
 
-                    let mesh = roofMeshBase.clone();
+                    let mesh = roofMeshBase.clone(undefined, undefined, true);
                     mesh.position.copyFromFloats(0, y, 0);
                     mesh.parent = this;
 
                     roofMeshBase.getChildMeshes().forEach(roofMeshChildBase => {
                         if (roofMeshChildBase instanceof BABYLON.Mesh) {
-                            let mesh = roofMeshChildBase.clone();
+                            let mesh = roofMeshChildBase.clone(undefined, undefined, true);
                             mesh.position.copyFromFloats(0, y, 0);
                             mesh.parent = this;
                         }

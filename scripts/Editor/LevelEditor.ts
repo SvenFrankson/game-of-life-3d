@@ -110,7 +110,7 @@ class LevelEditor {
 
         this.main.scene.onBeforeRenderObservable.add(this._update);
         this.main.canvas.addEventListener("pointerdown", this._onPointerDown);
-        this.main.canvas.addEventListener("pointermove", this._onPointerMove);
+        //this.main.canvas.addEventListener("pointermove", this._onPointerMove);
         this.main.canvas.addEventListener("pointerup", this._onPointerUp);
 
         this.showRoadMenu();
@@ -161,9 +161,11 @@ class LevelEditor {
         
         if (this.draggedProp) {
             this.main.camera.detachControl();
+            this.main.scene.onBeforeRenderObservable.add(this._draggingUpdate);
         }
         else {
             this.main.camera.attachControl();
+            this.main.scene.onBeforeRenderObservable.removeCallback(this._draggingUpdate);
         }
     }
 
@@ -200,8 +202,8 @@ class LevelEditor {
         }
     }
 
-    
-    private _onPointerMove = () => {
+    private _movingProp: Prop;
+    private _draggingUpdate = () => {
         if (this.draggedProp) {
             // Pick any mesh which is not the dragged prop.
             let pickInfo = this.main.scene.pick(
@@ -217,9 +219,19 @@ class LevelEditor {
 
             if (pickInfo && pickInfo.pickedPoint) {
                 this.draggedProp.setIsVisible(true);
-                this.draggedProp.position.x = pickInfo.pickedPoint.x;
-                this.draggedProp.position.y = pickInfo.pickedPoint.y;
-                this.draggedProp.position.z = pickInfo.pickedPoint.z;
+                if (!this._movingProp) {
+                    let newPos = new BABYLON.Vector3(
+                        Math.round(pickInfo.pickedPoint.x),
+                        pickInfo.pickedPoint.y,
+                        Math.round(pickInfo.pickedPoint.z)
+                    );
+                    if (BABYLON.Vector3.DistanceSquared(this.draggedProp.position, newPos) > 0.001 * 0.001) {
+                        this._movingProp = this.draggedProp;
+                        this.draggedProp.animatePos(newPos, 0.1).then(() => {
+                            this._movingProp = undefined;
+                        })                        
+                    }
+                }
             }
             else {
                 this.draggedProp.setIsVisible(false);
