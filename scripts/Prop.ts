@@ -7,6 +7,9 @@ interface ISelectableItem {
 
 class Prop extends BABYLON.Mesh implements ISelectableItem {
 
+    public bboxMin: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    public bboxMax: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+
     private static _Ident: number = 0;
     public static MakeNewIdent(): number {
         Prop._Ident++;
@@ -65,9 +68,13 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
             BABYLON.SceneLoader.ImportMesh("", "datas/meshes/" + this._modelName + ".babylon", "", this.scene, (meshes) => {
+                this.bboxMin.copyFromFloats(Infinity, Infinity, Infinity);
+                this.bboxMax.copyFromFloats(- Infinity, - Infinity, - Infinity);
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         let material = mesh.material;
+                        this.bboxMin.minimizeInPlace(mesh.getBoundingInfo().boundingBox.minimum);
+                        this.bboxMin.maximizeInPlace(mesh.getBoundingInfo().boundingBox.maximum);
                         if (material instanceof BABYLON.MultiMaterial) {
                             for (let i = 0; i < material.subMaterials.length; i++) {
                                 let subMat = material.subMaterials[i];

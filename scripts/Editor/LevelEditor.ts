@@ -135,8 +135,7 @@ class LevelEditor {
 
             if (this.selectedItem instanceof Road) {
                 this.roadSelector.isVisible = true;
-                this.roadSelector.position.x = this.selectedItem.i * 10;
-                this.roadSelector.position.z = this.selectedItem.j * 10;
+                Road.RoadIJToVec3ToRef(this.selectedItem.i, this.selectedItem.j, this.roadSelector.position);
 
                 this.selectedItemButtonsContainer.position.copyFrom(this.roadSelector.position);
     
@@ -220,7 +219,13 @@ class LevelEditor {
             );
 
             if (!this._movingPropOffset) {
-                this._movingPropOffset = this.draggedProp.position.subtract(pickInfo.pickedPoint);
+                if (this.draggedProp.isVisible) {
+                    this._movingPropOffset = this.draggedProp.position.subtract(pickInfo.pickedPoint);
+                    this._movingPropOffset.y = 0;
+                }
+                else {
+                    this._movingPropOffset = BABYLON.Vector3.Zero();
+                }
             }
 
             if (pickInfo && pickInfo.pickedPoint) {
@@ -280,12 +285,10 @@ class LevelEditor {
                     if (road) {
                         if (this.selectedItem && road === this.selectedItem) {
                             if (performance.now() - this._lastPointerUpTime < 200) {
+                                let v = BABYLON.Vector3.Zero();
+                                Road.RoadIJToVec3ToRef(road.i, road.j, v);
                                 this.main.animateCamera(
-                                    new BABYLON.Vector3(
-                                        road.i * 10,
-                                        0,
-                                        road.j * 10
-                                    ),
+                                    v,
                                     0.5
                                 );
                             }

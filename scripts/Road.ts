@@ -49,12 +49,16 @@ class Road implements ISelectableItem {
         }
         this.animateDir = AnimationFactory.CreateNumber(this, this, "dir");
 
-        this.mesh.position.x = this.i * 10;
-        this.mesh.position.y = 0;
-        this.mesh.position.z = this.j * 10;
+        this.mesh.position.copyFromFloats(0, 0, 0);
+        Road.RoadIJToVec3ToRef(this.i, this.j, this.mesh.position);
         this.mesh.rotation.y = Math.PI / 2 * this.dir;
 
         this._instantiated = true;
+    }
+
+    public static RoadIJToVec3ToRef(i: number, j: number, ref: BABYLON.Vector3): void {
+        ref.x = i * 10 + 4.5;
+        ref.z = j * 10 + 4.5;
     }
 
     public setRoadType(modelName: RoadType): void {

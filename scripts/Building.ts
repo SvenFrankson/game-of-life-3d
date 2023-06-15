@@ -45,6 +45,9 @@ class Building extends Prop {
                     let mesh = groundMeshBase.clone(undefined, undefined, true);
                     mesh.position.copyFromFloats(0, 0, 0);
                     mesh.parent = this;
+                    
+                    this.bboxMin.minimizeInPlace(mesh.getBoundingInfo().boundingBox.minimum);
+                    this.bboxMin.maximizeInPlace(mesh.getBoundingInfo().boundingBox.maximum);
 
                     groundMeshBase.getChildMeshes().forEach(groundMeshChildBase => {
                         if (groundMeshChildBase instanceof BABYLON.Mesh) {

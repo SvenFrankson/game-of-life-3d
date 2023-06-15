@@ -33,6 +33,7 @@ class Level {
 
     public roads: Road[];
     public props: UniqueList<Prop> = new UniqueList<Prop>();
+    public grid: TerrainGrid;
 
     constructor(public main: Main) {
         this.roads = [];
@@ -41,6 +42,9 @@ class Level {
                 this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.main.roadManager, this.main.scene, RoadType.Empty);
             }
         }
+        this.grid = new TerrainGrid(MAX_ROAD_SIZE * 10, MAX_ROAD_SIZE * 10);
+        this.grid.updateDebugMesh();
+        this.grid.debugMesh.position.y = 0.5;
     }
 
     public async instantiate(): Promise<void> {
