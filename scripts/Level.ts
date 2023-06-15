@@ -4,7 +4,7 @@ interface IVector3 {
     z: number;
 }
 
-function BABYLONVector3ToIVector3(v: BABYLON.Vector3): IVector3 {
+function Vector3ToIVector3(v: BABYLON.Vector3): IVector3 {
     return {
         x: v.x,
         y: v.y,
@@ -57,6 +57,29 @@ class Level {
         for (let i = 0; i < this.props.length; i++) {
             await this.props.get(i).instantiate();
         }
+
+        this.refreshGrid();
+    }
+    
+    public refreshGrid(): void {
+        this.grid.reset();
+
+        this.props.forEach(prop => {
+            let matrix = prop.computeWorldMatrix(true);
+            let tmp1 = BABYLON.Vector3.TransformCoordinates(prop.bboxMin, matrix);
+            let tmp2 = BABYLON.Vector3.TransformCoordinates(prop.bboxMax, matrix);
+
+            let min = BABYLON.Vector3.Minimize(tmp1, tmp2);
+            let max = BABYLON.Vector3.Maximize(tmp1, tmp2);
+
+            for (let i = Math.round(min.x); i <= Math.round(max.x); i++) {
+                for (let j = Math.round(min.z); j <= Math.round(max.z); j++) {
+                    this.grid.setValue(0, i, j);
+                }
+            }
+        });
+
+        this.grid.updateDebugMesh();
     }
 
     public serialize(): ILevelData {
@@ -76,7 +99,7 @@ class Level {
             let prop = this.props.get(i);
             let propData: IPropData = {
                 modelName: prop.modelName,
-                position: BABYLONVector3ToIVector3(prop.position),
+                position: Vector3ToIVector3(prop.position),
                 dir: prop.dir
             };
             if (prop instanceof Building) {

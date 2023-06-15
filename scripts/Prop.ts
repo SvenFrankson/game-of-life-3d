@@ -74,7 +74,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
                     if (mesh instanceof BABYLON.Mesh) {
                         let material = mesh.material;
                         this.bboxMin.minimizeInPlace(mesh.getBoundingInfo().boundingBox.minimum);
-                        this.bboxMin.maximizeInPlace(mesh.getBoundingInfo().boundingBox.maximum);
+                        this.bboxMax.maximizeInPlace(mesh.getBoundingInfo().boundingBox.maximum);
                         if (material instanceof BABYLON.MultiMaterial) {
                             for (let i = 0; i < material.subMaterials.length; i++) {
                                 let subMat = material.subMaterials[i];

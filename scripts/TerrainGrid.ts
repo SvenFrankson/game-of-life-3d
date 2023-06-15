@@ -13,10 +13,11 @@ class TerrainGrid {
 
     constructor(public w: number, public d: number) {
         this.values = new Uint8Array(w * d);
-        this.values.fill(0);
-        for (let i = 0; i < w * d; i++) {
-            this.values[i] = Math.round(Math.random());
-        }
+        this.reset();
+    }
+
+    public reset(): void {
+        this.values.fill(1);
     }
 
     public updateDebugMesh(): void {
@@ -63,5 +64,7 @@ class TerrainGrid {
         data.colors = colors;
 
         data.applyToMesh(this.debugMesh);
+
+        this.debugMesh.position.y = 0.5;
     }
 }

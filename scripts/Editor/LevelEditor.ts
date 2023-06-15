@@ -175,6 +175,7 @@ class LevelEditor {
                 this.draggedProp.dispose();
             }
             this.setDraggedProp(undefined);
+            this.main.level.refreshGrid();
             this.main.level.saveToLocalStorage();
         }
     }
@@ -211,6 +212,9 @@ class LevelEditor {
                 this.main.scene.pointerX,
                 this.main.scene.pointerY,
                 (mesh) => {
+                    if (!mesh.isPickable) {
+                        return false;
+                    }
                     if (mesh.parent === this.draggedProp) {
                         return false;
                     }
