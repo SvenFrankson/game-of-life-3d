@@ -26,7 +26,8 @@ class TerrainGrid {
         }
         this.debugMesh = new BABYLON.Mesh("terrain-grid-debug");
         this.debugMesh.isPickable = false;
-        this.debugMesh.visibility = 0.5;
+        this.debugMesh.visibility = 0.25;
+        this.debugMesh.position.y = 0.25;
 
         let data = new BABYLON.VertexData();
         let positions: number[] = [];
@@ -64,7 +65,5 @@ class TerrainGrid {
         data.colors = colors;
 
         data.applyToMesh(this.debugMesh);
-
-        this.debugMesh.position.y = 0.5;
     }
 }

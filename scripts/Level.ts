@@ -44,7 +44,6 @@ class Level {
         }
         this.grid = new TerrainGrid(MAX_ROAD_SIZE * 10, MAX_ROAD_SIZE * 10);
         this.grid.updateDebugMesh();
-        this.grid.debugMesh.position.y = 0.5;
     }
 
     public async instantiate(): Promise<void> {
