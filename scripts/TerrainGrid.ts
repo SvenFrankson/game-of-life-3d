@@ -21,12 +21,13 @@ class TerrainGrid {
     }
 
     public updateDebugMesh(): void {
+        let distGrid = this.makeGridTo(15, 15);
         if (this.debugMesh) {
             this.debugMesh.dispose();
         }
         this.debugMesh = new BABYLON.Mesh("terrain-grid-debug");
         this.debugMesh.isPickable = false;
-        this.debugMesh.visibility = 0.25;
+        //this.debugMesh.visibility = 0.25;
         this.debugMesh.position.y = 0.25;
 
         let data = new BABYLON.VertexData();
@@ -36,11 +37,11 @@ class TerrainGrid {
 
         for (let i = 0; i < this.w; i++) {
             for (let j = 0; j < this.d; j++) {
-                let v = this.getValue(i, j);
+                let v = distGrid[i + j * this.w];
 
                 let p = positions.length / 3;
-                let d1 = 0.05;
-                let d2 = 0.95;
+                let d1 = 0.0;
+                let d2 = 1;
                 positions.push(i + d1 - 0.5, 0, j + d1 - 0.5);
                 positions.push(i + d2 - 0.5, 0, j + d1 - 0.5);
                 positions.push(i + d2 - 0.5, 0, j + d2 - 0.5);
@@ -49,9 +50,15 @@ class TerrainGrid {
                 indices.push(p, p + 1, p + 2);
                 indices.push(p, p + 2, p + 3);
 
-                let r = v ? 0 : 1;
-                let g = v ? 1 : 0;
+                let r = 1;
+                let g = 0;
                 let b = 0.2;
+                if (isFinite(v)) {
+                    let f = v / 50;
+                    r = f;
+                    g = f;
+                    b = f;
+                }
 
                 colors.push(r, g, b, 1);
                 colors.push(r, g, b, 1);
@@ -65,5 +72,37 @@ class TerrainGrid {
         data.colors = colors;
 
         data.applyToMesh(this.debugMesh);
+    }
+
+    public makeGridTo(iTo: number, jTo: number): number[] {
+        let distGrid: number[] = [];
+
+        for (let n = 0; n < this.w * this.d; n++) {
+            distGrid[n] = Infinity;
+        }
+
+        this.doMakeGrid(0, iTo, jTo, distGrid);
+
+        return distGrid;
+    }
+
+    public doMakeGrid(v: number, i: number, j: number, distGrid: number[]): void {
+        if (i >= 0 && j >= 0 && i < this.w && j < this.d) {
+            if (this.getValue(i, j) > 0) {
+                if (v < distGrid[i + j * this.w]) {
+                    distGrid[i + j * this.w] = v;
+    
+                    this.doMakeGrid(v + 1, i + 1, j, distGrid);
+                    this.doMakeGrid(v + 1, i, j + 1, distGrid);
+                    this.doMakeGrid(v + 1, i - 1, j, distGrid);
+                    this.doMakeGrid(v + 1, i, j - 1, distGrid);
+                    
+                    this.doMakeGrid(v + Math.SQRT2, i + 1, j + 1, distGrid);
+                    this.doMakeGrid(v + Math.SQRT2, i - 1, j + 1, distGrid);
+                    this.doMakeGrid(v + Math.SQRT2, i - 1, j - 1, distGrid);
+                    this.doMakeGrid(v + Math.SQRT2, i + 1, j - 1, distGrid);
+                }
+            }
+        }
     }
 }
