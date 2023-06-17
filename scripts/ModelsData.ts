@@ -4,7 +4,9 @@ class PropsData {
         "building-bordeaux",
         "potted-plant",
         "street-tree-1",
-        "traffic-light"
+        "traffic-light",
+        "spawner",
+        "target"
     ];
 }
 

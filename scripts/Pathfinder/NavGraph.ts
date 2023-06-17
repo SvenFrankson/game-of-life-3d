@@ -278,8 +278,6 @@ class NavGraph {
                 colors.push(new BABYLON.Color4(0, 1, 0, 1));
             }
             this._devPathMesh = BABYLON.MeshBuilder.CreateLines("shape", { points: points, colors: colors });
-            this._devPathMesh.renderingGroupId = 1;
-            this._devPathMesh.layerMask = 0x10000000;
         }
     }
 

@@ -9,6 +9,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
 
     public bboxMin: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     public bboxMax: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    public hasObstacle: boolean = true;
     public obstacle: Obstacle;
 
     private static _Ident: number = 0;
@@ -63,6 +64,12 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
         if (modelName.startsWith("building")) {
             return new Building(modelName, level);
         }
+        else if (modelName === "spawner") {
+            return new Spawner(level);
+        }
+        else if (modelName === "target") {
+            return new Target(level);
+        }
         else {
             return new Prop(modelName, level);
         }
@@ -110,7 +117,9 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
                         }
                     }
                 });
-                this.obstacle = Obstacle.CreateRectWithPosRotSource(this, this.bboxMax.x - this.bboxMin.x, this.bboxMax.z - this.bboxMin.z);
+                if (this.hasObstacle) {
+                    this.obstacle = Obstacle.CreateRectWithPosRotSource(this, this.bboxMax.x - this.bboxMin.x, this.bboxMax.z - this.bboxMin.z);
+                }
 
                 this._instantiated = true;
                 resolve();

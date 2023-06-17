@@ -70,7 +70,15 @@ class Level {
         });
 
         NavGraphManager.GetForRadius(1).update();
+
+        let spawner = this.props.find(prop => { return prop instanceof Spawner; });
+        let target = this.props.find(prop => { return prop instanceof Target; });
+        if (spawner && target) {
+            NavGraphManager.GetForRadius(1).computePathFromTo(spawner.pos2D, target.pos2D);
+        }
+
         NavGraphManager.GetForRadius(1).displayGraph();
+        NavGraphManager.GetForRadius(1).displayPath();
     }
 
     public serialize(): ILevelData {

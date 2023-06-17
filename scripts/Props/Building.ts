@@ -99,7 +99,9 @@ class Building extends Prop {
                     mesh.dispose();
                 });
                 
-                this.obstacle = Obstacle.CreateRectWithPosRotSource(this, this.bboxMax.x - this.bboxMin.x, this.bboxMax.z - this.bboxMin.z);
+                if (this.hasObstacle) {
+                    this.obstacle = Obstacle.CreateRectWithPosRotSource(this, this.bboxMax.x - this.bboxMin.x, this.bboxMax.z - this.bboxMin.z);
+                }
 
                 this._instantiated = true;
                 resolve();
