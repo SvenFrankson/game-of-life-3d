@@ -5,7 +5,7 @@ class NavGraph {
     public start: NavGraphPoint;
     public end: NavGraphPoint;
     public points: NavGraphPoint[];
-    public obstacles: Obstacle[] = [];
+    public obstacles: UniqueList<Obstacle> = new UniqueList<Obstacle>();
 
     public setStart(s: BABYLON.Vector2): void {
         if (!this.start) {
@@ -30,7 +30,7 @@ class NavGraph {
             }
         )
         for (let i = 0; i < this.obstacles.length; i++) {
-            let o = this.obstacles[i];
+            let o = this.obstacles.get(i);
             let path = o.getPath(this.offset);
             let ngPoints = [];
             for (let j = 0; j < path.length; j++) {
@@ -53,7 +53,7 @@ class NavGraph {
                 if (!p1.unreachable && !p2.unreachable) {
                     let crossesAnotherShape: boolean = false;
                     for (let k = 0; k < this.obstacles.length; k++) {
-                        let otherObstacle = this.obstacles[k];
+                        let otherObstacle = this.obstacles.get(k);
                         if (o !== otherObstacle) {
                             let intersections = Math2D.SegmentShapeIntersection(p1.position, p2.position, otherObstacle.getPath(this.offset));
                             if (intersections.length > 0) {
@@ -110,7 +110,7 @@ class NavGraph {
                         if (!p2ShapeSelfIntersect) {
                             let crossOtherShape = false;
                             for (let i = 0; i < this.obstacles.length; i++) {
-                                let o = this.obstacles[i];
+                                let o = this.obstacles.get(i);
                                 if (o !== p1.obstacle && o !== p2.obstacle) {
                                     let path = o.getPath(this.offset);
                                     for (let j = 0; j < path.length; j++) {
@@ -131,6 +131,9 @@ class NavGraph {
             }
         }
         this.refreshDisplayGraph();
+
+        console.log(this.obstacles);
+        console.log(this.points);
     }
 
     public computePathFromTo(from: BABYLON.Vector2, to: BABYLON.Vector2): BABYLON.Vector2[]
@@ -172,7 +175,7 @@ class NavGraph {
                     if (!p2ShapeSelfIntersect) {
                         let crossOtherShape = false;
                         for (let k = 0; k < this.obstacles.length; k++) {
-                            let o = this.obstacles[k];
+                            let o = this.obstacles.get(k);
                             let path = o.getPath(this.offset);
                             if (!Math2D.IsPointInPath(p1.position, path)) {
                                 if (o !== toObstacle && o !== p2.obstacle) {
@@ -249,8 +252,8 @@ class NavGraph {
                         "line",
                         { 
                             points: [
-                                new BABYLON.Vector3(p.position.x, 0.1, p.position.y),
-                                new BABYLON.Vector3(p2.position.x, 0.1, p2.position.y)
+                                new BABYLON.Vector3(p.position.x, 0.5, p.position.y),
+                                new BABYLON.Vector3(p2.position.x, 0.5, p2.position.y)
                             ],
                             colors: [
                                 new BABYLON.Color4(0, 0, 1, 1),
@@ -258,8 +261,6 @@ class NavGraph {
                             ]
                         }
                     );
-                    devGraphMesh.renderingGroupId = 1;
-                    devGraphMesh.layerMask = 0x10000000;
                     devGraphMesh.parent = this._devGraphMesh;
                 }
             }
@@ -273,7 +274,7 @@ class NavGraph {
             let colors: BABYLON.Color4[] = [];
             for (let i = 0; i < this.path.length; i++) {
                 let p = this.path[i];
-                points.push(new BABYLON.Vector3(p.x, 0.3, p.y));
+                points.push(new BABYLON.Vector3(p.x, 0.6, p.y));
                 colors.push(new BABYLON.Color4(0, 1, 0, 1));
             }
             this._devPathMesh = BABYLON.MeshBuilder.CreateLines("shape", { points: points, colors: colors });

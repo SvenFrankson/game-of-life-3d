@@ -12,6 +12,7 @@ class Main {
     public camera: MyCamera;
     public animateCamera = AnimationFactory.EmptyVector3Callback;
     public light: BABYLON.HemisphericLight;
+    public navGraphManager: NavGraphManager;
 
     public static TestRedMaterial: ToonMaterial;
     public static TestGreenMaterial: ToonMaterial;
@@ -56,6 +57,8 @@ class Main {
         this.camera.getScene();
         OutlinePostProcess.AddOutlinePostProcess(this.camera);
         this.animateCamera = AnimationFactory.CreateVector3(this.camera, this.camera, "target");
+
+        this.navGraphManager = new NavGraphManager();
 
         this.roadManager = new RoadMeshManager();
         await this.roadManager.initialize();

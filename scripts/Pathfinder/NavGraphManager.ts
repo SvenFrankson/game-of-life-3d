@@ -22,9 +22,7 @@ class NavGraphManager {
         if (!navGraph) {
             navGraph = new NavGraph();
             navGraph.offset = offset;
-            for (let i = 0; i < this._navGraphZero.obstacles.length; i++) {
-                navGraph.obstacles.push(this._navGraphZero.obstacles[i]);
-            }
+            navGraph.obstacles = this._navGraphZero.obstacles.clone();
             this._navGraphs.set(offset, navGraph);
         }
         return navGraph;
@@ -55,10 +53,7 @@ class NavGraphManager {
     public removeObstacle(obstacle: Obstacle): void {
         this._navGraphs.forEach(
             (navGraph) => {
-                let index = navGraph.obstacles.indexOf(obstacle);
-                if (index !== -1) {
-                    navGraph.obstacles.splice(index, 1);
-                }
+                navGraph.obstacles.remove(obstacle);
             }
         )
     }

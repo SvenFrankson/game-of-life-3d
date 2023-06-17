@@ -1,6 +1,6 @@
 interface IHasPosRot {
-    position2D: BABYLON.Vector2;
-    rotation2D: number;
+    pos2D: BABYLON.Vector2;
+    rot2D: number;
 }
 
 class ShapeDraw {
@@ -35,7 +35,7 @@ abstract class Shape {
     private _position2D: BABYLON.Vector2;
     public get position2D(): BABYLON.Vector2 {
         if (this.posRotSource) {
-            return this.posRotSource.position2D;
+            return this.posRotSource.pos2D;
         }
         return this._position2D;
     }
@@ -45,7 +45,7 @@ abstract class Shape {
     private _rotation2D: number;
     public get rotation2D(): number {
         if (this.posRotSource) {
-            return this.posRotSource.rotation2D;
+            return this.posRotSource.rot2D;
         }
         return this._rotation2D;
     }

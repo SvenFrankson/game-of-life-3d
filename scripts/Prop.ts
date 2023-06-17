@@ -9,6 +9,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
 
     public bboxMin: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     public bboxMax: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    public obstacle: Obstacle;
 
     private static _Ident: number = 0;
     public static MakeNewIdent(): number {
@@ -26,6 +27,17 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
     }
 
     public animatePos = AnimationFactory.EmptyVector3Callback;
+    private _pos2D: BABYLON.Vector2 = BABYLON.Vector2.Zero();
+    public get pos2D(): BABYLON.Vector2 {
+        this._pos2D.x = this.position.x;
+        this._pos2D.y = this.position.z;
+        return this._pos2D;
+    } 
+    public set pos2D(v: BABYLON.Vector2) {
+        this.position.x = v.x;
+        this.position.z = v.y;
+    } 
+
     private _dir: number = 0;
     public get dir(): number {
         return this._dir;
@@ -35,6 +47,13 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
         this.rotation.y = Math.PI / 2 * this.dir;
     }
     public animateDir = AnimationFactory.EmptyNumberCallback;
+
+    public get rot2D(): number {
+        return this.rotation.y;
+    }
+    public set rot2D(v: number) {
+        this.rotation.y = v;
+    }
 
     public get scene(): BABYLON.Scene {
         return this.getScene();
@@ -61,6 +80,7 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
 
     public dispose(): void {
         this.level.props.remove(this);
+        NavGraphManager.RemoveObstacle(this.obstacle);
         super.dispose();
     }
 
@@ -90,6 +110,8 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
                         }
                     }
                 });
+                this.obstacle = Obstacle.CreateRectWithPosRotSource(this, this.bboxMax.x - this.bboxMin.x, this.bboxMax.z - this.bboxMin.z);
+
                 this._instantiated = true;
                 resolve();
             });

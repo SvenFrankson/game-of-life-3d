@@ -33,7 +33,7 @@ class Level {
 
     public roads: Road[];
     public props: UniqueList<Prop> = new UniqueList<Prop>();
-    public grid: TerrainGrid;
+    //public grid: TerrainGrid;
 
     constructor(public main: Main) {
         this.roads = [];
@@ -42,8 +42,8 @@ class Level {
                 this.roads[i + MAX_ROAD_SIZE * j] = new Road(i, j, 2, this.main.roadManager, this.main.scene, RoadType.Empty);
             }
         }
-        this.grid = new TerrainGrid(MAX_ROAD_SIZE * 10, MAX_ROAD_SIZE * 10);
-        this.grid.updateDebugMesh();
+        //this.grid = new TerrainGrid(MAX_ROAD_SIZE * 10, MAX_ROAD_SIZE * 10);
+        //this.grid.updateDebugMesh();
     }
 
     public async instantiate(): Promise<void> {
@@ -61,24 +61,16 @@ class Level {
     }
     
     public refreshGrid(): void {
-        this.grid.reset();
+        //this.grid.reset();
 
         this.props.forEach(prop => {
-            let matrix = prop.computeWorldMatrix(true);
-            let tmp1 = BABYLON.Vector3.TransformCoordinates(prop.bboxMin, matrix);
-            let tmp2 = BABYLON.Vector3.TransformCoordinates(prop.bboxMax, matrix);
-
-            let min = BABYLON.Vector3.Minimize(tmp1, tmp2);
-            let max = BABYLON.Vector3.Maximize(tmp1, tmp2);
-
-            for (let i = Math.round(min.x); i <= Math.round(max.x); i++) {
-                for (let j = Math.round(min.z); j <= Math.round(max.z); j++) {
-                    this.grid.setValue(0, i, j);
-                }
+            if (prop.obstacle) {
+                NavGraphManager.AddObstacle(prop.obstacle);
             }
         });
 
-        this.grid.updateDebugMesh();
+        NavGraphManager.GetForRadius(1).update();
+        NavGraphManager.GetForRadius(1).displayGraph();
     }
 
     public serialize(): ILevelData {
