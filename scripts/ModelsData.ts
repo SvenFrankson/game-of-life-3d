@@ -7,7 +7,8 @@ class PropsData {
         "traffic-light",
         "car",
         "spawner",
-        "target"
+        "target",
+        "human"
     ];
 }
 

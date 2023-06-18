@@ -67,7 +67,7 @@ class Main {
         this.level.loadFromLocalStorage();
         await this.level.instantiate();
 
-        let play = true;
+        let play = false;
         if (play) {
             this.level.start();
         }

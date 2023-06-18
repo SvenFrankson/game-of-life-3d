@@ -64,6 +64,9 @@ class Prop extends BABYLON.Mesh implements ISelectableItem {
         if (modelName.startsWith("building")) {
             return new Building(modelName, level);
         }
+        else if (modelName === "human") {
+            return new Human(level);
+        }
         else if (modelName === "spawner") {
             return new Spawner(level);
         }
