@@ -5,6 +5,7 @@ class PropsData {
         "potted-plant",
         "street-tree-1",
         "traffic-light",
+        "car",
         "spawner",
         "target"
     ];

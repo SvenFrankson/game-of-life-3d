@@ -130,10 +130,7 @@ class NavGraph {
                 }
             }
         }
-        this.refreshDisplayGraph();
-
-        console.log(this.obstacles);
-        console.log(this.points);
+        //this.refreshDisplayGraph();
     }
 
     public computePathFromTo(from: BABYLON.Vector2, to: BABYLON.Vector2): BABYLON.Vector2[]

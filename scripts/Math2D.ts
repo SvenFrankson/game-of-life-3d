@@ -107,6 +107,10 @@ class Math2D {
         return angle;
     }
 
+    public static HeadingFromDir(dir: BABYLON.Vector2): number {
+        return Math2D.AngleFromTo(new BABYLON.Vector2(0, 1), dir, true);
+    }
+
     public static Rotate(vector: BABYLON.Vector2, alpha: number): BABYLON.Vector2 {
         let v = vector.clone();
         Math2D.RotateInPlace(v, alpha);

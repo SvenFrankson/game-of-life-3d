@@ -41,6 +41,10 @@ class UniqueList<T> {
         return this._elements.find(callback);
     }
 
+    public filter(callback: (e: T) => boolean): T[] {
+        return this._elements.filter(callback);
+    }
+
     public forEach(callback: (e: T) => void): void {
         this._elements.forEach(e => {
             callback(e);

@@ -59,6 +59,21 @@ class Level {
 
         this.refreshGrid();
     }
+
+    public start(): void {
+        let spawners = this.getSpawners();
+        spawners.forEach(spawner => {
+            spawner.start();
+        }) 
+    }
+
+    public getSpawners(): Spawner[] {
+        return this.props.filter(prop => { return prop instanceof Spawner; }) as Spawner[];
+    }
+
+    public getTargets(): Target[] {
+        return this.props.filter(prop => { return prop instanceof Target; }) as Target[];
+    }
     
     public refreshGrid(): void {
         //this.grid.reset();
@@ -77,7 +92,7 @@ class Level {
             NavGraphManager.GetForRadius(1).computePathFromTo(spawner.pos2D, target.pos2D);
         }
 
-        NavGraphManager.GetForRadius(1).displayGraph();
+        //NavGraphManager.GetForRadius(1).displayGraph();
         NavGraphManager.GetForRadius(1).displayPath();
     }
 

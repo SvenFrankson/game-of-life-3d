@@ -67,10 +67,14 @@ class Main {
         this.level.loadFromLocalStorage();
         await this.level.instantiate();
 
-        let test = BABYLON.MeshBuilder.CreateBox("test", { width: 0.1, height: 10, depth: 0.1 });
-
-        let roadEditor = new LevelEditor(this);
-        roadEditor.initialize();
+        let play = true;
+        if (play) {
+            this.level.start();
+        }
+        else {
+            let roadEditor = new LevelEditor(this);
+            roadEditor.initialize();
+        }
 	}
 
 	public animate(): void {
