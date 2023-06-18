@@ -95,7 +95,6 @@ class Creep extends BABYLON.Mesh {
                 }
     
                 dir.normalize();
-                console.log(dir);
                 this.position.x += dir.x * dDist;
                 this.position.z += dir.y * dDist;
 
