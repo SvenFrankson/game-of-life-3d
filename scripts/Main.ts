@@ -51,19 +51,26 @@ class Main {
 
         this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(- 1, 3, 2)).normalize(), this.scene);
 
-        this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
-        this.camera.setPosition(new BABYLON.Vector3(30, 30, -10));
+        //this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
+        //this.camera.setPosition(new BABYLON.Vector3(30, 30, -10));
+        this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0));
+        this.camera.setPosition(new BABYLON.Vector3(- 4, 6, 10));
         this.camera.attachControl();
         this.camera.getScene();
         OutlinePostProcess.AddOutlinePostProcess(this.camera);
         this.animateCamera = AnimationFactory.CreateVector3(this.camera, this.camera, "target");
 
+        this.level = new Level(this);
+
+        let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+        let human = new HumanTest(this.level);
+        human.instantiate();
+        return;
         this.navGraphManager = new NavGraphManager();
 
         this.roadManager = new RoadMeshManager();
         await this.roadManager.initialize();
 
-        this.level = new Level(this);
         this.level.loadFromLocalStorage();
         await this.level.instantiate();
 

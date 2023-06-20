@@ -8,6 +8,7 @@ class Human extends Prop {
     public lowerLegR: BABYLON.Bone;
 
     public rootAlt: number = 1;
+    public hipLPosition: BABYLON.Vector3;
     public footTargetL: BABYLON.Mesh;
     public footTargetR: BABYLON.Mesh;
     public kneeL: BABYLON.Mesh;
@@ -25,8 +26,11 @@ class Human extends Prop {
         super("human", level);
         this.hasObstacle = false;
         this.footTargetL = new BABYLON.Mesh("footTargetL");
+        BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.footTargetL);
         this.footTargetR = new BABYLON.Mesh("footTargetR");
+
         this.kneeL = new BABYLON.Mesh("kneeL");
+        BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.kneeL);
         this.kneeR = new BABYLON.Mesh("kneeR");
 
         this.handTargetL = new BABYLON.Mesh("handTargetL");
@@ -40,6 +44,7 @@ class Human extends Prop {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         this.humanMesh = mesh;
+                        this.humanMesh.visibility = 0.8;
                         /*
                         let material = mesh.material;
                         if (material instanceof BABYLON.MultiMaterial) {
@@ -68,8 +73,15 @@ class Human extends Prop {
                     console.log(this.root.getDirection(BABYLON.Axis.Y));
                     console.log(this.root.getDirection(BABYLON.Axis.Z));
                     this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
+                    this.hipLPosition = this.upperLegL.getPosition(BABYLON.Space.LOCAL);
+                    console.log(this.hipLPosition);
+                    this.upperLegL.parent = undefined;
+
                     this.upperLegR = skeleton.bones.find(bone => { return bone.name === "upper-leg-right"; });
+                    
                     this.legL = skeleton.bones.find(bone => { return bone.name === "leg-left"; });
+                    this.legL.parent = undefined;
+
                     this.lowerLegR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
                     let lowerArmRight = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
                     let handRight = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
@@ -121,6 +133,8 @@ class Human extends Prop {
         
         this.kneeR.position.addInPlace(this.forward.scale(0.1));
 
+        this.upperLegL.setAbsolutePosition(BABYLON.Vector3.TransformCoordinates(this.hipLPosition, this.root.getWorldMatrix()));
+
         let upperLegLZ = BABYLON.Vector3.Zero();
         let lowerLegLZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
@@ -133,6 +147,7 @@ class Human extends Prop {
 
         VMath.QuaternionFromZYAxisToRef(upperLegLZ, BABYLON.Vector3.Up(), q);
         this.upperLegL.setRotationQuaternion(q);
+
         this.legL.setAbsolutePosition(this.kneeL.position);
         VMath.QuaternionFromZYAxisToRef(lowerLegLZ, BABYLON.Vector3.Up(), q);
         this.legL.setRotationQuaternion(q);
