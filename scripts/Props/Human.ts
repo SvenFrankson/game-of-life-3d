@@ -1,6 +1,20 @@
 class Human extends Prop {
     
-    public ass: BABYLON.Bone;
+    public root: BABYLON.Bone;
+    public torso: BABYLON.Bone;
+    public upperLegL: BABYLON.Bone;
+    public legL: BABYLON.Bone;
+    public upperLegR: BABYLON.Bone;
+    public lowerLegR: BABYLON.Bone;
+
+    public rootAlt: number = 1;
+    public footTargetL: BABYLON.Mesh;
+    public footTargetR: BABYLON.Mesh;
+    public kneeL: BABYLON.Mesh;
+    public kneeR: BABYLON.Mesh;
+    public handTargetL: BABYLON.Mesh;
+    public handTargetR: BABYLON.Mesh;
+
     public humanMesh: BABYLON.Mesh;
 
     public get engine(): BABYLON.Engine {
@@ -10,6 +24,13 @@ class Human extends Prop {
     constructor(level: Level) {
         super("human", level);
         this.hasObstacle = false;
+        this.footTargetL = new BABYLON.Mesh("footTargetL");
+        this.footTargetR = new BABYLON.Mesh("footTargetR");
+        this.kneeL = new BABYLON.Mesh("kneeL");
+        this.kneeR = new BABYLON.Mesh("kneeR");
+
+        this.handTargetL = new BABYLON.Mesh("handTargetL");
+        this.handTargetR = new BABYLON.Mesh("handTargetR");
     }
 
     protected _instantiated = false;
@@ -42,9 +63,14 @@ class Human extends Prop {
 
                 skeletons.forEach(skeleton => {
                     console.log(skeleton);
-                    this.ass = skeleton.bones.find(bone => {
-                        return bone.name === "ass";
-                    });
+                    this.root = skeleton.bones.find(bone => { return bone.name === "ass"; });
+                    console.log(this.root.getDirection(BABYLON.Axis.X));
+                    console.log(this.root.getDirection(BABYLON.Axis.Y));
+                    console.log(this.root.getDirection(BABYLON.Axis.Z));
+                    this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
+                    this.upperLegR = skeleton.bones.find(bone => { return bone.name === "upper-leg-right"; });
+                    this.legL = skeleton.bones.find(bone => { return bone.name === "leg-left"; });
+                    this.lowerLegR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
                     let lowerArmRight = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
                     let handRight = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
                     handRight.parent = lowerArmRight;
@@ -59,7 +85,7 @@ class Human extends Prop {
                             console.log(bone.name + " " + bone.parent.name);
                         }
                     })
-                    console.log(this.ass);
+                    console.log(this.root);
                 });
 
                 this._instantiated = true;
@@ -78,7 +104,37 @@ class Human extends Prop {
     private _update = () => {
         let dt = this.engine.getDeltaTime() / 1000;
         this._timer += dt;
-        this.ass.setAbsolutePosition(new BABYLON.Vector3(this.pos2D.x, 1 + Math.cos(this._timer), this.pos2D.y));
+        
+        this.rootAlt = 0.8 + 0.4 * Math.cos(this._timer);
+
+        this.root.setAbsolutePosition(new BABYLON.Vector3(this.pos2D.x, this.rootAlt, this.pos2D.y));
+        let q = BABYLON.Quaternion.Identity();
         this.humanMesh.refreshBoundingInfo(true);
+
+        this.footTargetL.position.copyFromFloats(- 0.2, 0, 0);
+        BABYLON.Vector3.TransformCoordinatesToRef(this.footTargetL.position, this.getWorldMatrix(), this.footTargetL.position);
+
+        this.kneeL.position.addInPlace(this.forward.scale(0.1));
+
+        this.footTargetR.position.copyFromFloats(0.2, 0, 0);
+        BABYLON.Vector3.TransformCoordinatesToRef(this.footTargetR.position, this.getWorldMatrix(), this.footTargetR.position);
+        
+        this.kneeR.position.addInPlace(this.forward.scale(0.1));
+
+        let upperLegLZ = BABYLON.Vector3.Zero();
+        let lowerLegLZ = BABYLON.Vector3.Zero();
+        for (let i = 0; i < 3; i++) {
+            lowerLegLZ.copyFrom(this.footTargetL.position).subtractInPlace(this.kneeL.position).normalize().scaleInPlace(0.3);
+            this.kneeL.position.copyFrom(this.footTargetL.position).subtractInPlace(lowerLegLZ);
+
+            upperLegLZ.copyFrom(this.kneeL.position).subtractInPlace(this.upperLegL.getAbsolutePosition()).normalize().scaleInPlace(0.3);
+            this.kneeL.position.copyFrom(this.upperLegL.getAbsolutePosition()).addInPlace(upperLegLZ);
+        }
+
+        VMath.QuaternionFromZYAxisToRef(upperLegLZ, BABYLON.Vector3.Up(), q);
+        this.upperLegL.setRotationQuaternion(q);
+        this.legL.setAbsolutePosition(this.kneeL.position);
+        VMath.QuaternionFromZYAxisToRef(lowerLegLZ, BABYLON.Vector3.Up(), q);
+        this.legL.setRotationQuaternion(q);
     }
 }
