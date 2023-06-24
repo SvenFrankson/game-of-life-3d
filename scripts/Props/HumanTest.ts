@@ -244,8 +244,13 @@ class HumanTest extends Prop {
 
         this.human.upperLegL.setPosition(this.hipL.absolutePosition);
         let q = BABYLON.Quaternion.Identity();
-        VMath.QuaternionFromZYAxisToRef(this.kneeL.position.subtract(this.hipL.absolutePosition), BABYLON.Axis.Y, q);
+        VMath.QuaternionFromYZAxisToRef(this.kneeL.position.subtract(this.hipL.absolutePosition).scale(-1), this.forward, q);
         this.human.upperLegL.setRotationQuaternion(q);
+
+        this.human.legL.setPosition(this.kneeL.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.footL.position.subtract(this.kneeL.absolutePosition).scale(-1), this.kneeL.position.subtract(this.hipL.absolutePosition), q);
+        this.human.legL.setRotationQuaternion(q);
+
         this.human.upperLegR.setPosition(this.hipR.absolutePosition);
 
         if (this.humanMesh) {

@@ -70,6 +70,7 @@ class Human extends Prop {
                     console.log(skeleton);
                     this.root = skeleton.bones.find(bone => { return bone.name === "ass"; });
                     this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
+                    this.hipLPosition = this.upperLegL.getPosition(BABYLON.Space.LOCAL);
                     console.log("upperLegL");
                     console.log(this.upperLegL.getAbsolutePosition());
                     console.log(this.upperLegL.rotationQuaternion);
@@ -77,11 +78,6 @@ class Human extends Prop {
                     console.log("- - -");
                     this.upperLegL.parent = undefined;
                     
-                    let test1 = BABYLON.MeshBuilder.CreateSphere("hip", { diameter: 0.1 });
-                    let test2 = BABYLON.MeshBuilder.CreateSphere("hip", { diameter: 0.1 });
-                    test2.parent = test1;
-                    test2.position.y = - 0.32;
-
                     this.upperLegR = skeleton.bones.find(bone => { return bone.name === "upper-leg-right"; });
                     this.upperLegR.parent = undefined;
                     
@@ -126,7 +122,7 @@ class Human extends Prop {
         let dt = this.engine.getDeltaTime() / 1000;
         this._timer += dt;
         
-        this.rootAlt = 0.8 + 0.4 * Math.cos(this._timer);
+        //this.rootAlt = 0.8 + 0.4 * Math.cos(this._timer);
 
         this.root.setAbsolutePosition(new BABYLON.Vector3(this.pos2D.x, this.rootAlt, this.pos2D.y));
         let q = BABYLON.Quaternion.Identity();
@@ -154,11 +150,11 @@ class Human extends Prop {
             this.kneeL.position.copyFrom(this.upperLegL.getAbsolutePosition()).addInPlace(upperLegLZ);
         }
 
-        VMath.QuaternionFromZYAxisToRef(upperLegLZ, BABYLON.Vector3.Up(), q);
+        VMath.QuaternionFromYZAxisToRef(upperLegLZ.scale(-1), this.forward, q);
         this.upperLegL.setRotationQuaternion(q);
 
         this.legL.setAbsolutePosition(this.kneeL.position);
-        VMath.QuaternionFromZYAxisToRef(lowerLegLZ, BABYLON.Vector3.Up(), q);
+        VMath.QuaternionFromYZAxisToRef(lowerLegLZ.scale(-1), this.forward, q);
         this.legL.setRotationQuaternion(q);
     }
 }

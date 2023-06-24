@@ -36,17 +36,67 @@ class Main {
 
 		this.scene = new BABYLON.Scene(this.engine);
 
+        /*
         BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy.babylon", "", this.scene, (meshes, particlesSystem, skeletons) => {
             console.log("- test-toy -");
             console.log(meshes);
             let boneX = skeletons[0].bones.find(b => { return b.name === "bone-x"});
-            console.log(boneX.position + " " + boneX.rotationQuaternion);
+            console.log("BoneX " + boneX.position + " " + boneX.rotation + " " + boneX.rotationQuaternion);
+            //boneX.setRotationQuaternion(BABYLON.Quaternion.Identity());
             let boneY = skeletons[0].bones.find(b => { return b.name === "bone-y"});
-            console.log(boneY.position + " " + boneY.rotationQuaternion);
+            console.log("BoneY " + boneY.position + " " + boneY.rotation + " " + boneY.rotationQuaternion);
+            //boneY.setRotationQuaternion(BABYLON.Quaternion.Identity());
             let boneZ = skeletons[0].bones.find(b => { return b.name === "bone-z"});
-            console.log(boneZ.position + " " + boneZ.rotationQuaternion);
+            console.log("BoneZ " + boneZ.position + " " + boneZ.rotation + " " + boneZ.rotationQuaternion);
+            //boneZ.setRotationQuaternion(BABYLON.Quaternion.Identity());
+            let boneXMinus = skeletons[0].bones.find(b => { return b.name === "bone-x-minus"});
+            console.log("BoneXMinus " + boneXMinus.position + " " + boneXMinus.rotation + " " + boneXMinus.rotationQuaternion);
+            let boneYMinus = skeletons[0].bones.find(b => { return b.name === "bone-y-minus"});
+            console.log("BoneYMinus " + boneYMinus.position + " " + boneYMinus.rotation + " " + boneYMinus.rotationQuaternion);
+            let boneZMinus = skeletons[0].bones.find(b => { return b.name === "bone-z-minus"});
+            console.log("BoneZMinus " + boneZMinus.position + " " + boneZMinus.rotation + " " + boneZMinus.rotationQuaternion);
+            
+
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.x = 3;
+                mesh.rotationQuaternion = boneX.rotationQuaternion;
+            });
+
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.y = 3;
+                mesh.rotationQuaternion = boneY.rotationQuaternion;
+            });
+
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.z = 3;
+                mesh.rotationQuaternion = boneZ.rotationQuaternion;
+            });
+            
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.x = - 3;
+                mesh.rotationQuaternion = boneXMinus.rotationQuaternion;
+            });
+
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.y = - 3;
+                mesh.rotationQuaternion = boneYMinus.rotationQuaternion;
+            });
+
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy-boneless.babylon", "", this.scene, (meshes) => {
+                let mesh = meshes[0];
+                mesh.position.z = - 3;
+                mesh.rotationQuaternion = boneZMinus.rotationQuaternion;
+            });
+
+            console.log("Identity Quaternion " + BABYLON.Quaternion.Identity());
             console.log("- test-toy -");
         });
+        */
 
         Main.TestRedMaterial = new ToonMaterial("red-material", this.scene);
         Main.TestRedMaterial.setDiffuseColor(BABYLON.Color3.Red());
@@ -74,7 +124,7 @@ class Main {
 
         this.level = new Level(this);
 
-        let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+        //let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
         let human = new HumanTest(this.level);
         human.instantiate();
         return;
