@@ -5,7 +5,7 @@ class Human extends Prop {
     public upperLegL: BABYLON.Bone;
     public legL: BABYLON.Bone;
     public upperLegR: BABYLON.Bone;
-    public lowerLegR: BABYLON.Bone;
+    public legR: BABYLON.Bone;
 
     public rootAlt: number = 1;
     public hipLPosition: BABYLON.Vector3;
@@ -26,11 +26,11 @@ class Human extends Prop {
         super("human", level);
         this.hasObstacle = false;
         this.footTargetL = new BABYLON.Mesh("footTargetL");
-        BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.footTargetL);
+        //BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.footTargetL);
         this.footTargetR = new BABYLON.Mesh("footTargetR");
 
         this.kneeL = new BABYLON.Mesh("kneeL");
-        BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.kneeL);
+        //BABYLON.CreateBoxVertexData({ size: 0.2 }).applyToMesh(this.kneeL);
         this.kneeR = new BABYLON.Mesh("kneeR");
 
         this.handTargetL = new BABYLON.Mesh("handTargetL");
@@ -69,25 +69,34 @@ class Human extends Prop {
                 skeletons.forEach(skeleton => {
                     console.log(skeleton);
                     this.root = skeleton.bones.find(bone => { return bone.name === "ass"; });
-                    console.log(this.root.getDirection(BABYLON.Axis.X));
-                    console.log(this.root.getDirection(BABYLON.Axis.Y));
-                    console.log(this.root.getDirection(BABYLON.Axis.Z));
                     this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
-                    this.hipLPosition = this.upperLegL.getPosition(BABYLON.Space.LOCAL);
-                    console.log(this.hipLPosition);
+                    console.log("upperLegL");
+                    console.log(this.upperLegL.getAbsolutePosition());
+                    console.log(this.upperLegL.rotationQuaternion);
+                    console.log(BABYLON.Quaternion.Identity());
+                    console.log("- - -");
                     this.upperLegL.parent = undefined;
+                    
+                    let test1 = BABYLON.MeshBuilder.CreateSphere("hip", { diameter: 0.1 });
+                    let test2 = BABYLON.MeshBuilder.CreateSphere("hip", { diameter: 0.1 });
+                    test2.parent = test1;
+                    test2.position.y = - 0.32;
 
                     this.upperLegR = skeleton.bones.find(bone => { return bone.name === "upper-leg-right"; });
+                    this.upperLegR.parent = undefined;
                     
                     this.legL = skeleton.bones.find(bone => { return bone.name === "leg-left"; });
                     this.legL.parent = undefined;
+                    
+                    this.legR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
+                    this.legR.parent = undefined;
 
-                    this.lowerLegR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
+                    this.legR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
                     let lowerArmRight = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
                     let handRight = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
-                    handRight.parent = lowerArmRight;
+                    //handRight.parent = lowerArmRight;
                     let thumbRight = skeleton.bones.find(bone => { return bone.name === "thumb-right"; });
-                    thumbRight.parent = lowerArmRight;
+                    //thumbRight.parent = lowerArmRight;
 
                     skeleton.bones.forEach(bone => {
                         if (!bone.parent) {
@@ -108,12 +117,12 @@ class Human extends Prop {
     }
 
     public start(): void {
-        console.log("Start human");
         this.scene.onBeforeRenderObservable.add(this._update);
     }
 
     private _timer: number = 0;
     private _update = () => {
+        return;
         let dt = this.engine.getDeltaTime() / 1000;
         this._timer += dt;
         

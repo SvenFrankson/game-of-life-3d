@@ -1,5 +1,7 @@
 class HumanTest extends Prop {
     
+    public human: Human;
+
     public root: BABYLON.Mesh;
     public torso: BABYLON.Mesh;
     public head: BABYLON.Mesh;
@@ -31,10 +33,14 @@ class HumanTest extends Prop {
     constructor(level: Level) {
         super("human", level);
         this.hasObstacle = false;
+
+        this.human = new Human(level);
     }
 
     protected _instantiated = false;
     public async instantiate(): Promise<void> {
+        await this.human.instantiate();
+
         this.root = BABYLON.MeshBuilder.CreateBox("root", { size: 0.1 });
         this.torso = BABYLON.MeshBuilder.CreateBox("torso", { size: 0.1 });
         this.head = BABYLON.MeshBuilder.CreateBox("head", { size: 0.1 });
@@ -170,6 +176,16 @@ class HumanTest extends Prop {
         this.root.position.copyFrom(this.position);
         this.root.position.y += this.rootAlt;
 
+        // Shake that ass
+        let footDir = this.footR.position.subtract(this.footL.position).normalize();
+        let footHeading = VMath.AngleFromToAround(this.right, footDir, this.up);
+        this.root.rotation.y = footHeading * 0.25;
+
+        // Alpha shouldering
+        let handDir = this.handR.position.subtract(this.handL.position).normalize();
+        let handHeading = VMath.AngleFromToAround(this.right, handDir, this.up);
+        this.torso.rotation.y = handHeading * 0.25;
+
         this.torso.position.copyFrom(this.root.position);
         this.torso.position.y += 0.33;
 
@@ -225,6 +241,12 @@ class HumanTest extends Prop {
             upperLegRZ.copyFrom(this.kneeR.position).subtractInPlace(this.hipR.absolutePosition).normalize().scaleInPlace(0.32);
             this.kneeR.position.copyFrom(this.hipR.absolutePosition).addInPlace(upperLegRZ);
         }
+
+        this.human.upperLegL.setPosition(this.hipL.absolutePosition);
+        let q = BABYLON.Quaternion.Identity();
+        VMath.QuaternionFromZYAxisToRef(this.kneeL.position.subtract(this.hipL.absolutePosition), BABYLON.Axis.Y, q);
+        this.human.upperLegL.setRotationQuaternion(q);
+        this.human.upperLegR.setPosition(this.hipR.absolutePosition);
 
         if (this.humanMesh) {
             this.humanMesh.dispose();

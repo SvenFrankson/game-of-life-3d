@@ -36,6 +36,18 @@ class Main {
 
 		this.scene = new BABYLON.Scene(this.engine);
 
+        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/test-toy.babylon", "", this.scene, (meshes, particlesSystem, skeletons) => {
+            console.log("- test-toy -");
+            console.log(meshes);
+            let boneX = skeletons[0].bones.find(b => { return b.name === "bone-x"});
+            console.log(boneX.position + " " + boneX.rotationQuaternion);
+            let boneY = skeletons[0].bones.find(b => { return b.name === "bone-y"});
+            console.log(boneY.position + " " + boneY.rotationQuaternion);
+            let boneZ = skeletons[0].bones.find(b => { return b.name === "bone-z"});
+            console.log(boneZ.position + " " + boneZ.rotationQuaternion);
+            console.log("- test-toy -");
+        });
+
         Main.TestRedMaterial = new ToonMaterial("red-material", this.scene);
         Main.TestRedMaterial.setDiffuseColor(BABYLON.Color3.Red());
 
