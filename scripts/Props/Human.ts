@@ -2,6 +2,7 @@ class Human extends Prop {
     
     public root: BABYLON.Bone;
     public torso: BABYLON.Bone;
+
     public upperLegL: BABYLON.Bone;
     public legL: BABYLON.Bone;
     public upperLegR: BABYLON.Bone;
@@ -9,8 +10,12 @@ class Human extends Prop {
 
     public armL: BABYLON.Bone;
     public lowerArmL: BABYLON.Bone;
+    public handL: BABYLON.Bone;
+    public thumbL: BABYLON.Bone;
     public armR: BABYLON.Bone;
     public lowerArmR: BABYLON.Bone;
+    public handR: BABYLON.Bone;
+    public thumbR: BABYLON.Bone;
 
     public rootAlt: number = 1;
     public hipLPosition: BABYLON.Vector3;
@@ -93,13 +98,14 @@ class Human extends Prop {
                     
                     this.lowerArmL = skeleton.bones.find(bone => { return bone.name === "lower-arm-left"; });
                     this.lowerArmR = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
-
-                    this.legR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
-                    let lowerArmRight = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
-                    let handRight = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
-                    //handRight.parent = lowerArmRight;
-                    let thumbRight = skeleton.bones.find(bone => { return bone.name === "thumb-right"; });
-                    //thumbRight.parent = lowerArmRight;
+                    
+                    this.handL = skeleton.bones.find(bone => { return bone.name === "hand-left"; });
+                    this.handR = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
+                    this.handR.parent = this.lowerArmR;
+                    
+                    this.thumbL = skeleton.bones.find(bone => { return bone.name === "thumb-left"; });
+                    this.thumbR = skeleton.bones.find(bone => { return bone.name === "thumb-right"; });
+                    this.thumbR.parent = this.lowerArmR;
 
                     skeleton.bones.forEach(bone => {
                         if (!bone.parent) {

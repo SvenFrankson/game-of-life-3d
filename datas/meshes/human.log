@@ -36,21 +36,21 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		processing begun of material:  Material.002
 		processing begun of material:  Material
 		processing begun of multimaterial:  human.Multimaterial#0
-		num positions      :  827
-		num normals        :  827
+		num positions      :  763
+		num normals        :  763
 		num tangents       :  0
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  1578
+		num triangles      :  1450
 		Skeleton stats:  
-			Total Influencers:  1357
-			Avg # of influencers per vertex:  1.6409
+			Total Influencers:  1255
+			Avg # of influencers per vertex:  1.6448
 			Highest # of influencers observed:  6, num vertices with this:  1
 			exported as 6 influencers
-			num skeletonWeights and skeletonIndices:  6616
+			num skeletonWeights and skeletonIndices:  6104
 ========= Writing of JSON file started =========
 	writing mesh:  human
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.2364 secs
+elapsed time:  0 min, 0.2089 secs
