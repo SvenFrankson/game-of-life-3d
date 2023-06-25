@@ -42,6 +42,7 @@ class HumanTest extends Prop {
         await this.human.instantiate();
 
         this.root = BABYLON.MeshBuilder.CreateBox("root", { size: 0.1 });
+        this.root.rotationQuaternion = BABYLON.Quaternion.Identity();
         this.torso = BABYLON.MeshBuilder.CreateBox("torso", { size: 0.1 });
         this.torso.material = Main.TestRedMaterial;
         this.head = BABYLON.MeshBuilder.CreateBox("head", { size: 0.1 });
@@ -170,27 +171,30 @@ class HumanTest extends Prop {
         let dt = this.engine.getDeltaTime() / 1000;
         this._timer += dt;
 
-        this.root.position.copyFrom(this.position);
+        let footCenter = this.footL.position.add(this.footR.position).scaleInPlace(0.5);
+        let handCenter = this.handL.position.add(this.handR.position).scaleInPlace(0.5);
+        let torsoDir = handCenter.subtract(this.position).normalize();
+        torsoDir.addInPlace(BABYLON.Axis.Y.scale(0.5)).normalize();
+
+        this.root.position.copyFrom(this.position)
         this.root.position.y += this.rootAlt;
 
         // Shake that ass
         let footDir = this.footR.position.subtract(this.footL.position).normalize();
-        let footHeading = VMath.AngleFromToAround(this.right, footDir, this.up);
-        this.root.rotation.y = footHeading * 0.25;
+        footDir.addInPlace(this.right.scale(3)).normalize();
+        VMath.QuaternionFromXYAxisToRef(footDir, torsoDir, this.root.rotationQuaternion);
 
         // Alpha shouldering
         let handDir = this.handR.position.subtract(this.handL.position).normalize();
         let handHeading = VMath.AngleFromToAround(this.right, handDir, this.up);
-        this.torso.rotation.y = handHeading * 0.25;
+        this.torso.rotation.y = handHeading * 0.33;
 
         let shoulderForward = BABYLON.Vector3.Cross(this.head.absolutePosition.subtract(this.torso.absolutePosition), handDir).normalize();
+        let footForward = BABYLON.Vector3.Cross(this.torso.absolutePosition.subtract(this.root.absolutePosition), footDir).normalize();
 
-        this.torso.position.copyFrom(this.root.absolutePosition);
-        this.torso.position.y += 0.33;
+        this.torso.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, 0), this.root.getWorldMatrix());
 
-        this.head.position.copyFrom(this.torso.absolutePosition);
-        this.head.position.y += 0.35;
-        this.head.position.z -= 0.05;
+        this.head.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, -0.05), this.torso.getWorldMatrix());
 
         this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(0.32));
 
@@ -245,9 +249,12 @@ class HumanTest extends Prop {
         let q = BABYLON.Quaternion.Identity();
 
         this.human.root.setPosition(this.root.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.torso.absolutePosition.subtract(this.root.absolutePosition).scale(-1), footForward, q);
+        this.human.root.setRotationQuaternion(q.normalize());
 
-        this.human.upperLegR.setPosition(this.hipR.absolutePosition);
-        // [...]
+        this.human.torso.setPosition(this.torso.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.head.absolutePosition.subtract(this.torso.absolutePosition).scale(-1), shoulderForward, q);
+        this.human.torso.setRotationQuaternion(q.normalize());
 
         this.human.upperLegR.setPosition(this.hipR.absolutePosition.clone());
         VMath.QuaternionFromYZAxisToRef(this.kneeR.position.subtract(this.hipR.absolutePosition).scale(-1), this.forward.add(this.up), q);
@@ -264,10 +271,6 @@ class HumanTest extends Prop {
         this.human.legL.setPosition(this.kneeL.absolutePosition.clone());
         VMath.QuaternionFromYZAxisToRef(this.footL.position.subtract(this.kneeL.absolutePosition).scale(-1), this.kneeL.position.subtract(this.hipL.absolutePosition), q);
         this.human.legL.setRotationQuaternion(q.normalize());
-
-        this.human.torso.setPosition(this.torso.absolutePosition);
-        VMath.QuaternionFromYZAxisToRef(this.head.absolutePosition.subtract(this.torso.absolutePosition).scale(-1), shoulderForward, q);
-        this.human.torso.setRotationQuaternion(q.normalize());
 
         this.human.armR.setPosition(this.shoulderR.absolutePosition);
         VMath.QuaternionFromYZAxisToRef(this.elbowR.position.subtract(this.shoulderR.absolutePosition).scale(-1), this.up, q);

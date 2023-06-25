@@ -116,6 +116,7 @@ class Main {
         //this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(MAX_ROAD_SIZE * 5, 0, MAX_ROAD_SIZE * 5));
         //this.camera.setPosition(new BABYLON.Vector3(30, 30, -10));
         this.camera = new MyCamera("camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0));
+        this.camera.wheelPrecision *= 10;
         this.camera.setPosition(new BABYLON.Vector3(- 4, 6, 10));
         this.camera.attachControl();
         this.camera.getScene();

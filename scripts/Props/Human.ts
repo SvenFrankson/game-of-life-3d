@@ -54,7 +54,6 @@ class Human extends Prop {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         this.humanMesh = mesh;
-                        this.humanMesh.visibility = 0.8;
                         /*
                         let material = mesh.material;
                         if (material instanceof BABYLON.MultiMaterial) {
