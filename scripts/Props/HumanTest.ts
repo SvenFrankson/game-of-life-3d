@@ -43,34 +43,31 @@ class HumanTest extends Prop {
 
         this.root = BABYLON.MeshBuilder.CreateBox("root", { size: 0.1 });
         this.torso = BABYLON.MeshBuilder.CreateBox("torso", { size: 0.1 });
+        this.torso.material = Main.TestRedMaterial;
         this.head = BABYLON.MeshBuilder.CreateBox("head", { size: 0.1 });
-
-        let headMesh = BABYLON.MeshBuilder.CreateBox("headmesh", { size: 0.65 });
-        headMesh.parent = this.head;
-        headMesh.position.y = 0.325;
         
         this.shoulderL = BABYLON.MeshBuilder.CreateBox("shoulderL", { size: 0.06 });
         this.shoulderL.parent = this.torso;
         this.shoulderL.position = new BABYLON.Vector3(- 0.2, 0.2, 0);
-        this.elbowL = BABYLON.MeshBuilder.CreateBox("elbowL", { size: 0.1 });
+        this.elbowL = BABYLON.MeshBuilder.CreateBox("elbowL", { size: 0.01 });
         this.handL = BABYLON.MeshBuilder.CreateBox("handL", { size: 0.1 });
 
         this.shoulderR = BABYLON.MeshBuilder.CreateBox("shoulderR", { size: 0.06 });
         this.shoulderR.parent = this.torso;
         this.shoulderR.position = new BABYLON.Vector3(0.2, 0.2, 0);
-        this.elbowR = BABYLON.MeshBuilder.CreateBox("elbowR", { size: 0.1 });
+        this.elbowR = BABYLON.MeshBuilder.CreateBox("elbowR", { size: 0.01 });
         this.handR = BABYLON.MeshBuilder.CreateBox("handR", { size: 0.1 });
         
         this.hipL = BABYLON.MeshBuilder.CreateBox("hipL", { size: 0.06 });
         this.hipL.parent = this.root;
         this.hipL.position = new BABYLON.Vector3(- 0.13, 0, 0);
-        this.kneeL = BABYLON.MeshBuilder.CreateBox("kneeL", { size: 0.1 });
+        this.kneeL = BABYLON.MeshBuilder.CreateBox("kneeL", { size: 0.01 });
         this.footL = BABYLON.MeshBuilder.CreateBox("footL", { size: 0.1 });
 
         this.hipR = BABYLON.MeshBuilder.CreateBox("hipR", { size: 0.06 });
         this.hipR.parent = this.root;
         this.hipR.position = new BABYLON.Vector3(0.13, 0, 0);
-        this.kneeR = BABYLON.MeshBuilder.CreateBox("kneeR", { size: 0.1 });
+        this.kneeR = BABYLON.MeshBuilder.CreateBox("kneeR", { size: 0.01 });
         this.footR = BABYLON.MeshBuilder.CreateBox("footR", { size: 0.1 });
         
         this.handL.position.copyFrom(this.position);
@@ -186,11 +183,14 @@ class HumanTest extends Prop {
         let handHeading = VMath.AngleFromToAround(this.right, handDir, this.up);
         this.torso.rotation.y = handHeading * 0.25;
 
-        this.torso.position.copyFrom(this.root.position);
+        let shoulderForward = BABYLON.Vector3.Cross(this.head.absolutePosition.subtract(this.torso.absolutePosition), handDir).normalize();
+
+        this.torso.position.copyFrom(this.root.absolutePosition);
         this.torso.position.y += 0.33;
 
-        this.head.position.copyFrom(this.torso.position);
+        this.head.position.copyFrom(this.torso.absolutePosition);
         this.head.position.y += 0.35;
+        this.head.position.z -= 0.05;
 
         this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(0.32));
 
@@ -242,16 +242,31 @@ class HumanTest extends Prop {
             this.kneeR.position.copyFrom(this.hipR.absolutePosition).addInPlace(upperLegRZ);
         }
 
-        this.human.upperLegL.setPosition(this.hipL.absolutePosition);
-        let q = BABYLON.Quaternion.Identity();
-        VMath.QuaternionFromYZAxisToRef(this.kneeL.position.subtract(this.hipL.absolutePosition).scale(-1), this.forward, q);
-        this.human.upperLegL.setRotationQuaternion(q);
-
-        this.human.legL.setPosition(this.kneeL.absolutePosition);
-        VMath.QuaternionFromYZAxisToRef(this.footL.position.subtract(this.kneeL.absolutePosition).scale(-1), this.kneeL.position.subtract(this.hipL.absolutePosition), q);
-        this.human.legL.setRotationQuaternion(q);
+        this.human.root.setPosition(this.root.absolutePosition);
 
         this.human.upperLegR.setPosition(this.hipR.absolutePosition);
+        // [...]
+
+        this.human.upperLegL.setPosition(this.hipL.absolutePosition.clone());
+        let q = BABYLON.Quaternion.Identity();
+        VMath.QuaternionFromYZAxisToRef(this.kneeL.position.subtract(this.hipL.absolutePosition).scale(-1), this.forward.add(this.up), q);
+        this.human.upperLegL.setRotationQuaternion(q.normalize());
+
+        this.human.legL.setPosition(this.kneeL.absolutePosition.clone());
+        VMath.QuaternionFromYZAxisToRef(this.footL.position.subtract(this.kneeL.absolutePosition).scale(-1), this.kneeL.position.subtract(this.hipL.absolutePosition), q);
+        this.human.legL.setRotationQuaternion(q.normalize());
+
+        this.human.torso.setPosition(this.torso.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.head.absolutePosition.subtract(this.torso.absolutePosition).scale(-1), shoulderForward, q);
+        this.human.torso.setRotationQuaternion(q.normalize());
+
+        this.human.armL.setPosition(this.shoulderL.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.elbowL.position.subtract(this.shoulderL.absolutePosition).scale(-1), this.up, q);
+        this.human.armL.setRotationQuaternion(q.normalize());
+
+        this.human.lowerArmL.setPosition(this.elbowL.absolutePosition.clone());
+        VMath.QuaternionFromYZAxisToRef(this.handL.position.subtract(this.elbowL.absolutePosition).scale(-1), this.up, q);
+        this.human.lowerArmL.setRotationQuaternion(q.normalize());
 
         if (this.humanMesh) {
             this.humanMesh.dispose();

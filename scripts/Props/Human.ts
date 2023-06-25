@@ -7,6 +7,11 @@ class Human extends Prop {
     public upperLegR: BABYLON.Bone;
     public legR: BABYLON.Bone;
 
+    public armL: BABYLON.Bone;
+    public lowerArmL: BABYLON.Bone;
+    public armR: BABYLON.Bone;
+    public lowerArmR: BABYLON.Bone;
+
     public rootAlt: number = 1;
     public hipLPosition: BABYLON.Vector3;
     public footTargetL: BABYLON.Mesh;
@@ -69,23 +74,25 @@ class Human extends Prop {
                 skeletons.forEach(skeleton => {
                     console.log(skeleton);
                     this.root = skeleton.bones.find(bone => { return bone.name === "ass"; });
-                    this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
-                    this.hipLPosition = this.upperLegL.getPosition(BABYLON.Space.LOCAL);
-                    console.log("upperLegL");
-                    console.log(this.upperLegL.getAbsolutePosition());
-                    console.log(this.upperLegL.rotationQuaternion);
+                    this.torso = skeleton.bones.find(bone => { return bone.name === "torso"; });
+                    console.log("torso");
+                    console.log(this.torso);
+                    console.log(this.torso.getAbsolutePosition());
+                    console.log(this.torso.rotationQuaternion);
                     console.log(BABYLON.Quaternion.Identity());
                     console.log("- - -");
-                    this.upperLegL.parent = undefined;
-                    
+
+                    this.upperLegL = skeleton.bones.find(bone => { return bone.name === "upper-leg-left"; });
                     this.upperLegR = skeleton.bones.find(bone => { return bone.name === "upper-leg-right"; });
-                    this.upperLegR.parent = undefined;
                     
                     this.legL = skeleton.bones.find(bone => { return bone.name === "leg-left"; });
-                    this.legL.parent = undefined;
-                    
                     this.legR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
-                    this.legR.parent = undefined;
+                    
+                    this.armL = skeleton.bones.find(bone => { return bone.name === "upper-arm-left"; });
+                    this.armR = skeleton.bones.find(bone => { return bone.name === "upper-arm-right"; });
+                    
+                    this.lowerArmL = skeleton.bones.find(bone => { return bone.name === "lower-arm-left"; });
+                    this.lowerArmR = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });
 
                     this.legR = skeleton.bones.find(bone => { return bone.name === "leg-right"; });
                     let lowerArmRight = skeleton.bones.find(bone => { return bone.name === "lower-arm-right"; });

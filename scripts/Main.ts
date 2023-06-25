@@ -109,7 +109,7 @@ class Main {
 
 		//this.scene.clearColor.copyFromFloats(166 / 255, 231 / 255, 255 / 255, 1);
         //this.scene.clearColor = BABYLON.Color4.FromHexString("#eb4034ff");
-        this.scene.clearColor = BABYLON.Color4.FromHexString("#eb4034");
+        this.scene.clearColor = BABYLON.Color4.FromHexString("#80d1a6");
 
         this.light = new BABYLON.HemisphericLight("light", (new BABYLON.Vector3(- 1, 3, 2)).normalize(), this.scene);
 
