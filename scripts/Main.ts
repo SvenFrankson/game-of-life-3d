@@ -123,16 +123,18 @@ class Main {
         OutlinePostProcess.AddOutlinePostProcess(this.camera);
         this.animateCamera = AnimationFactory.CreateVector3(this.camera, this.camera, "target");
 
+        this.roadManager = new RoadMeshManager();
+        await this.roadManager.initialize();
+        
         this.level = new Level(this);
 
         //let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
         let human = new HumanTest(this.level);
         human.instantiate();
         return;
+        
         this.navGraphManager = new NavGraphManager();
 
-        this.roadManager = new RoadMeshManager();
-        await this.roadManager.initialize();
 
         this.level.loadFromLocalStorage();
         await this.level.instantiate();

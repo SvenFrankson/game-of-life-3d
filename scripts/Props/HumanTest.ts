@@ -94,8 +94,75 @@ class HumanTest extends Prop {
         this.pointerPlane.rotationQuaternion = BABYLON.Quaternion.Identity();
 
         this.scene.onBeforeRenderObservable.add(this._update);
+        this.scene.onBeforeRenderObservable.add(this._simpleWalk);
 
         this.scene.onPointerObservable.add(this.onPointerEvent);
+    }
+
+    private _steping: boolean = false;
+    public _simpleWalk = () => {
+
+        this.handL.position.copyFrom(this.position);
+        this.handL.position.x -= 0.5;
+        this.handL.position.y += 0.8;
+        this.handL.position.z += 0.2;
+        
+        this.handR.position.copyFrom(this.position);
+        this.handR.position.x += 0.5;
+        this.handR.position.y += 0.8;
+        this.handR.position.z += 0.2;
+        
+        this.position.z = this._timer * 0.5;
+        if (!this._steping) {
+            let footTargetL = this.position.clone();
+            footTargetL.x -= 0.12;
+            footTargetL.z -= 0.1;
+
+            let footTargetR = this.position.clone();
+            footTargetR.x += 0.12;
+            footTargetR.z -= 0.1;
+
+            let dL = BABYLON.Vector3.Distance(this.footL.absolutePosition, footTargetL);
+            let dR = BABYLON.Vector3.Distance(this.footR.absolutePosition, footTargetR);
+            console.log(dL + " " + dR);
+            if (dL > dR) {
+                if (dL > 0.01) {
+                    this._steping = true;
+                    this.step(this.footL, footTargetL).then(() => { this._steping = false; });
+                }
+            }
+            else {
+                if (dR > 0.01) {
+                    this._steping = true;
+                    this.step(this.footR, footTargetR).then(() => { this._steping = false; });
+                }
+            }
+        }
+    }
+
+    private async step(foot: BABYLON.Mesh, target: BABYLON.Vector3): Promise<void> {
+        return new Promise<void>(resolve => {
+            let origin = foot.position.clone();
+            let destination = target.clone();
+            let up = this.up;
+            let duration = 1;
+            let t = 0;
+            let animationCB = () => {
+                t += this.scene.getEngine().getDeltaTime() / 1000;
+                let f = t / duration;
+                if (f < 1) {
+                    let p = origin.scale(1 - f).addInPlace(destination.scale(f));
+                    p.addInPlace(up.scale(0.3 * Math.sin(f * Math.PI)));
+                    foot.position.copyFrom(p);
+                }
+                else {
+                    foot.position.copyFrom(destination);
+                    this.scene.onBeforeRenderObservable.removeCallback(animationCB);
+                    resolve();
+                }
+            }
+            this.scene.onBeforeRenderObservable.add(animationCB);
+        })
     }
 
     public start(): void {
@@ -176,8 +243,8 @@ class HumanTest extends Prop {
         let torsoDir = handCenter.subtract(this.position).normalize();
         torsoDir.addInPlace(BABYLON.Axis.Y.scale(0.5)).normalize();
 
-        this.root.position.copyFrom(this.position)
-        this.root.position.y += this.rootAlt;
+        this.root.position.copyFrom(footCenter);
+        this.root.position.y = this.rootAlt;
 
         // Shake that ass
         let footDir = this.footR.position.subtract(this.footL.position).normalize();

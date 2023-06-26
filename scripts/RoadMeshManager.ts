@@ -21,7 +21,7 @@ class RoadMeshManager {
                         }
                         this.roadMeshes.set(mesh.name, mesh);
                         mesh.position.x = 0;
-                        mesh.position.y = - 10 - p;
+                        mesh.position.y = - 1000 - p;
                         mesh.position.z = 0;
                         p++;
                     }
