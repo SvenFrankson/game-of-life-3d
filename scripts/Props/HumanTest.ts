@@ -104,8 +104,10 @@ class HumanTest extends Prop {
     public _simpleWalk = () => {
         let dt = this.engine.getDeltaTime() / 1000;
 
-        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.5, 0.1, 0.6), this.root.getWorldMatrix());
-        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(- 0.5, 0.1, 0.6), this.root.getWorldMatrix());
+        //this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.5, 0.1, 0.6), this.root.getWorldMatrix());
+        //this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(- 0.5, 0.1, 0.6), this.root.getWorldMatrix());
+        this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
+        this.handL.position = this.footR.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).subtract(this.right.scale(0.4));
         
         this.position.addInPlace(this.forward.scale(dt * 0.8));
         this.rotation.y += dt * Math.PI * 0.05;
@@ -231,7 +233,7 @@ class HumanTest extends Prop {
 
         let footCenter = this.footL.position.add(this.footR.position).scaleInPlace(0.5);
         let handCenter = this.handL.position.add(this.handR.position).scaleInPlace(0.5);
-        let torsoDir = handCenter.subtract(this.position).normalize();
+        let torsoDir = handCenter.subtract(footCenter).normalize();
         torsoDir.addInPlace(BABYLON.Axis.Y.scale(0.5)).normalize();
 
         this.root.position.copyFrom(footCenter);
@@ -279,7 +281,7 @@ class HumanTest extends Prop {
         }
 
         this.kneeL.position.copyFrom(this.hipL.absolutePosition).addInPlace(this.footL.position).scaleInPlace(0.5);
-        this.kneeL.position.addInPlace(this.forward.scale(0.2)).addInPlace(this.right.scale(- 0.1));
+        this.kneeL.position.addInPlace(this.forward.scale(0.1)).addInPlace(this.right.scale(- 0.05));
 
         let upperLegLZ = BABYLON.Vector3.Zero();
         let lowerLegLZ = BABYLON.Vector3.Zero();
@@ -292,7 +294,7 @@ class HumanTest extends Prop {
         }
         
         this.kneeR.position.copyFrom(this.hipR.absolutePosition).addInPlace(this.footR.position).scaleInPlace(0.5);
-        this.kneeR.position.addInPlace(this.forward.scale(0.2)).addInPlace(this.right.scale(0.1));
+        this.kneeR.position.addInPlace(this.forward.scale(0.1)).addInPlace(this.right.scale(0.05));
 
         let upperLegRZ = BABYLON.Vector3.Zero();
         let lowerLegRZ = BABYLON.Vector3.Zero();
