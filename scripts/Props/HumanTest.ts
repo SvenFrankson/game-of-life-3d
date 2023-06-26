@@ -50,13 +50,13 @@ class HumanTest extends Prop {
         
         this.shoulderL = BABYLON.MeshBuilder.CreateBox("shoulderL", { size: 0.06 });
         this.shoulderL.parent = this.torso;
-        this.shoulderL.position = new BABYLON.Vector3(- 0.15, 0.21, 0);
+        this.shoulderL.position = new BABYLON.Vector3(- 0.15, 0.24, 0);
         this.elbowL = BABYLON.MeshBuilder.CreateBox("elbowL", { size: 0.01 });
         this.handL = BABYLON.MeshBuilder.CreateBox("handL", { size: 0.1 });
 
         this.shoulderR = BABYLON.MeshBuilder.CreateBox("shoulderR", { size: 0.06 });
         this.shoulderR.parent = this.torso;
-        this.shoulderR.position = new BABYLON.Vector3(0.15, 0.21, 0);
+        this.shoulderR.position = new BABYLON.Vector3(0.15, 0.24, 0);
         this.elbowR = BABYLON.MeshBuilder.CreateBox("elbowR", { size: 0.01 });
         this.handR = BABYLON.MeshBuilder.CreateBox("handR", { size: 0.1 });
         
