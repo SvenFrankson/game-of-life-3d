@@ -6,6 +6,8 @@ in vec3 normal;
 in vec2 uv;
 in vec4 color;
 
+#include<bonesDeclaration>
+
 uniform mat4 worldViewProjection;
 uniform mat4 world;
 uniform vec3 lightInvDirW;

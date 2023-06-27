@@ -26,6 +26,8 @@ class HumanTest extends Prop {
 
     public humanMesh: BABYLON.LinesMesh;
 
+    public m16: BABYLON.Mesh;
+
     public get engine(): BABYLON.Engine {
         return this.scene.getEngine();
     }
@@ -48,29 +50,29 @@ class HumanTest extends Prop {
         this.torso.material = Main.TestRedMaterial;
         this.head = BABYLON.MeshBuilder.CreateBox("head", { size: 0.1 });
         
-        this.shoulderL = BABYLON.MeshBuilder.CreateBox("shoulderL", { size: 0.06 });
+        this.shoulderL = BABYLON.MeshBuilder.CreateBox("shoulderL", { size: 0.01 });
         this.shoulderL.parent = this.torso;
         this.shoulderL.position = new BABYLON.Vector3(- 0.15, 0.24, 0);
         this.elbowL = BABYLON.MeshBuilder.CreateBox("elbowL", { size: 0.01 });
-        this.handL = BABYLON.MeshBuilder.CreateBox("handL", { size: 0.1 });
+        this.handL = BABYLON.MeshBuilder.CreateBox("handL", { size: 0.01 });
 
-        this.shoulderR = BABYLON.MeshBuilder.CreateBox("shoulderR", { size: 0.06 });
+        this.shoulderR = BABYLON.MeshBuilder.CreateBox("shoulderR", { size: 0.01 });
         this.shoulderR.parent = this.torso;
         this.shoulderR.position = new BABYLON.Vector3(0.15, 0.24, 0);
         this.elbowR = BABYLON.MeshBuilder.CreateBox("elbowR", { size: 0.01 });
-        this.handR = BABYLON.MeshBuilder.CreateBox("handR", { size: 0.1 });
+        this.handR = BABYLON.MeshBuilder.CreateBox("handR", { size: 0.01 });
         
         this.hipL = BABYLON.MeshBuilder.CreateBox("hipL", { size: 0.06 });
         this.hipL.parent = this.root;
         this.hipL.position = new BABYLON.Vector3(- 0.13, 0, 0);
         this.kneeL = BABYLON.MeshBuilder.CreateBox("kneeL", { size: 0.01 });
-        this.footL = BABYLON.MeshBuilder.CreateBox("footL", { size: 0.1 });
+        this.footL = BABYLON.MeshBuilder.CreateBox("footL", { size: 0.01 });
 
         this.hipR = BABYLON.MeshBuilder.CreateBox("hipR", { size: 0.06 });
         this.hipR.parent = this.root;
         this.hipR.position = new BABYLON.Vector3(0.13, 0, 0);
         this.kneeR = BABYLON.MeshBuilder.CreateBox("kneeR", { size: 0.01 });
-        this.footR = BABYLON.MeshBuilder.CreateBox("footR", { size: 0.1 });
+        this.footR = BABYLON.MeshBuilder.CreateBox("footR", { size: 0.01 });
         
         this.handL.position.copyFrom(this.position);
         this.handL.position.x -= 0.5;
@@ -90,6 +92,23 @@ class HumanTest extends Prop {
         this.footR.position.x += 0.12;
         this.footR.position.z += 0.1;
 
+        this.m16 = new BABYLON.Mesh("m16");
+        this.m16.rotationQuaternion = BABYLON.Quaternion.Identity();
+        BABYLON.SceneLoader.ImportMesh("", "datas/meshes/m16.babylon", "", this.scene, (meshes) => {
+            meshes.forEach(mesh => {
+                if (mesh instanceof BABYLON.Mesh) {
+                    let material = mesh.material;
+                    if (material instanceof BABYLON.PBRMaterial) {
+                        let toonMat = new ToonMaterial(material.name + "-3-toon", this.scene);
+                        toonMat.setDiffuseColor(material.albedoColor);
+                        mesh.material = toonMat;
+                    }
+                    this.m16 = mesh;
+                    this.m16.rotationQuaternion = BABYLON.Quaternion.Identity();
+                }
+            });
+        });
+
         this.pointerPlane = BABYLON.MeshBuilder.CreateGround("pointer-plane", { width: 10, height: 10 });
         this.pointerPlane.visibility = 0.1;
         this.pointerPlane.rotationQuaternion = BABYLON.Quaternion.Identity();
@@ -104,10 +123,12 @@ class HumanTest extends Prop {
     public _simpleWalk = () => {
         let dt = this.engine.getDeltaTime() / 1000;
 
-        //this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.5, 0.1, 0.6), this.root.getWorldMatrix());
-        //this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(- 0.5, 0.1, 0.6), this.root.getWorldMatrix());
-        this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
-        this.handL.position = this.footR.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).subtract(this.right.scale(0.4));
+        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.25, 0.1, 0.15), this.torso.getWorldMatrix());
+        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.1, 0.1, 0.4), this.torso.getWorldMatrix());
+        this.m16.position.copyFrom(this.handR.position);
+        VMath.QuaternionFromZYAxisToRef(this.handL.position.subtract(this.handR.position), BABYLON.Axis.Y, this.m16.rotationQuaternion);
+        //this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
+        //this.handL.position = this.footR.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).subtract(this.right.scale(0.4));
         
         this.position.addInPlace(this.forward.scale(dt * 0.8));
         this.rotation.y += dt * Math.PI * 0.05;
@@ -235,6 +256,7 @@ class HumanTest extends Prop {
         let handCenter = this.handL.position.add(this.handR.position).scaleInPlace(0.5);
         let torsoDir = handCenter.subtract(footCenter).normalize();
         torsoDir.addInPlace(BABYLON.Axis.Y.scale(0.5)).normalize();
+        torsoDir = BABYLON.Vector3.Up();
 
         this.root.position.copyFrom(footCenter);
         this.root.position.y = this.rootAlt;
@@ -256,24 +278,24 @@ class HumanTest extends Prop {
 
         this.head.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, -0.05), this.torso.getWorldMatrix());
 
-        this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(0.32));
+        this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(0.32)).subtractInPlace(this.right.scale(0.32)).subtractInPlace(this.up.scale(0.32));
 
         let upperArmLZ = BABYLON.Vector3.Zero();
         let lowerArmLZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmLZ.copyFrom(this.handL.position).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(0.2);
+            lowerArmLZ.copyFrom(this.handL.position).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(0.3);
             this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(lowerArmLZ);
 
             upperArmLZ.copyFrom(this.elbowL.position).subtractInPlace(this.shoulderL.absolutePosition).normalize().scaleInPlace(0.22);
             this.elbowL.position.copyFrom(this.shoulderL.absolutePosition).addInPlace(upperArmLZ);
         }
         
-        this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(this.forward.scale(0.32));
+        this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(this.forward.scale(0.32)).addInPlace(this.right.scale(0.32)).subtractInPlace(this.up.scale(0.32));
 
         let upperArmRZ = BABYLON.Vector3.Zero();
         let lowerArmRZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmRZ.copyFrom(this.handR.position).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(0.2);
+            lowerArmRZ.copyFrom(this.handR.position).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(0.3);
             this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(lowerArmRZ);
 
             upperArmRZ.copyFrom(this.elbowR.position).subtractInPlace(this.shoulderR.absolutePosition).normalize().scaleInPlace(0.22);

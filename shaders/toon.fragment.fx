@@ -15,7 +15,7 @@ void main() {
    float sunLightFactor = max((dot(vNormalW, lightInvDirW) + 0.5) / 1.5, 0.0);
    sunLightFactor *= 0.6 + 0.4;
 
-   float lightFactor = round(sunLightFactor * 8.) / 8.;
+   float lightFactor = round(sunLightFactor * 4.) / 4.;
 
    //vec3 color = vColor.rgb;
 

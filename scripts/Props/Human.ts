@@ -17,7 +17,7 @@ class Human extends Prop {
     public handR: BABYLON.Bone;
     public thumbR: BABYLON.Bone;
 
-    public rootAlt: number = 1;
+    public rootAlt: number = 0.3;
     public hipLPosition: BABYLON.Vector3;
     public footTargetL: BABYLON.Mesh;
     public footTargetR: BABYLON.Mesh;
@@ -54,7 +54,7 @@ class Human extends Prop {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         this.humanMesh = mesh;
-                        /*
+                        
                         let material = mesh.material;
                         if (material instanceof BABYLON.MultiMaterial) {
                             for (let i = 0; i < material.subMaterials.length; i++) {
@@ -71,7 +71,6 @@ class Human extends Prop {
                             toonMat.setDiffuseColor(material.albedoColor);
                             mesh.material = toonMat;
                         }
-                        */
                     }
                 });
 
