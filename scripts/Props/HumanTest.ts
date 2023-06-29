@@ -23,6 +23,9 @@ class HumanTest extends Prop {
     public footR: BABYLON.Mesh;
 
     public rootAlt: number = 0.65;
+    public armLength: number = 0.3;
+    public lowerArmLength: number = 0.3;
+    public handLength: number = 0.1;
 
     public humanMesh: BABYLON.LinesMesh;
 
@@ -42,6 +45,9 @@ class HumanTest extends Prop {
     protected _instantiated = false;
     public async instantiate(): Promise<void> {
         await this.human.instantiate();
+
+        this.armLength = BABYLON.Vector3.Distance(this.human.armR.getAbsolutePosition(), this.human.lowerArmR.getAbsolutePosition());
+        this.lowerArmLength = BABYLON.Vector3.Distance(this.human.lowerArmR.getAbsolutePosition(), this.human.handR.getAbsolutePosition());
 
         this.root = BABYLON.MeshBuilder.CreateBox("root", { size: 0.1 });
         this.root.rotationQuaternion = BABYLON.Quaternion.Identity();
@@ -278,27 +284,27 @@ class HumanTest extends Prop {
 
         this.head.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, -0.05), this.torso.getWorldMatrix());
 
-        this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(0.32)).subtractInPlace(this.right.scale(0.32)).subtractInPlace(this.up.scale(0.32));
+        this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(this.lowerArmLength)).subtractInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
 
         let upperArmLZ = BABYLON.Vector3.Zero();
         let lowerArmLZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmLZ.copyFrom(this.handL.position).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(0.3);
+            lowerArmLZ.copyFrom(this.handL.position).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(this.lowerArmLength);
             this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(lowerArmLZ);
 
-            upperArmLZ.copyFrom(this.elbowL.position).subtractInPlace(this.shoulderL.absolutePosition).normalize().scaleInPlace(0.22);
+            upperArmLZ.copyFrom(this.elbowL.position).subtractInPlace(this.shoulderL.absolutePosition).normalize().scaleInPlace(this.armLength);
             this.elbowL.position.copyFrom(this.shoulderL.absolutePosition).addInPlace(upperArmLZ);
         }
         
-        this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(this.forward.scale(0.32)).addInPlace(this.right.scale(0.32)).subtractInPlace(this.up.scale(0.32));
+        this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(this.forward.scale(this.lowerArmLength)).addInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
 
         let upperArmRZ = BABYLON.Vector3.Zero();
         let lowerArmRZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmRZ.copyFrom(this.handR.position).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(0.3);
+            lowerArmRZ.copyFrom(this.handR.position).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(this.lowerArmLength);
             this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(lowerArmRZ);
 
-            upperArmRZ.copyFrom(this.elbowR.position).subtractInPlace(this.shoulderR.absolutePosition).normalize().scaleInPlace(0.22);
+            upperArmRZ.copyFrom(this.elbowR.position).subtractInPlace(this.shoulderR.absolutePosition).normalize().scaleInPlace(this.armLength);
             this.elbowR.position.copyFrom(this.shoulderR.absolutePosition).addInPlace(upperArmRZ);
         }
 

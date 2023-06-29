@@ -40,22 +40,22 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		processing begun of material:  steel
 		processing begun of material:  black
 		processing begun of multimaterial:  riflewoman.Multimaterial#0
-		num positions      :  1398
-		num normals        :  1398
+		num positions      :  1506
+		num normals        :  1506
 		num tangents       :  0
-		num uvs            :  2796
+		num uvs            :  3012
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  2338
+		num triangles      :  2570
 		Skeleton stats:  
-			Total Influencers:  2758
-			Avg # of influencers per vertex:  1.9728
+			Total Influencers:  2644
+			Avg # of influencers per vertex:  1.7556
 			Highest # of influencers observed:  6, num vertices with this:  16
 			exported as 6 influencers
-			num skeletonWeights and skeletonIndices:  11184
+			num skeletonWeights and skeletonIndices:  12048
 	processing begun of node:  Empty
 ========= Writing of JSON file started =========
 	writing mesh:  human
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.3922 secs
+elapsed time:  0 min, 0.4002 secs
