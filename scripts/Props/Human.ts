@@ -99,11 +99,9 @@ class Human extends Prop {
                     
                     this.handL = skeleton.bones.find(bone => { return bone.name === "hand-left"; });
                     this.handR = skeleton.bones.find(bone => { return bone.name === "hand-right"; });
-                    this.handR.parent = this.lowerArmR;
                     
                     this.thumbL = skeleton.bones.find(bone => { return bone.name === "thumb-left"; });
                     this.thumbR = skeleton.bones.find(bone => { return bone.name === "thumb-right"; });
-                    this.thumbR.parent = this.lowerArmR;
 
                     skeleton.bones.forEach(bone => {
                         if (!bone.parent) {
