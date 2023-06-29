@@ -27,8 +27,6 @@ class HumanTest extends Prop {
     public lowerArmLength: number = 0.3;
     public handLength: number = 0.1;
 
-    public humanMesh: BABYLON.LinesMesh;
-
     public m16: BABYLON.Mesh;
 
     public get engine(): BABYLON.Engine {
@@ -49,35 +47,35 @@ class HumanTest extends Prop {
         this.armLength = BABYLON.Vector3.Distance(this.human.armR.getAbsolutePosition(), this.human.lowerArmR.getAbsolutePosition());
         this.lowerArmLength = BABYLON.Vector3.Distance(this.human.lowerArmR.getAbsolutePosition(), this.human.handR.getAbsolutePosition());
 
-        this.root = BABYLON.MeshBuilder.CreateBox("root", { size: 0.1 });
+        this.root = new BABYLON.Mesh("root");
         this.root.rotationQuaternion = BABYLON.Quaternion.Identity();
-        this.torso = BABYLON.MeshBuilder.CreateBox("torso", { size: 0.1 });
+        this.torso = new BABYLON.Mesh("torso");
         this.torso.rotationQuaternion = BABYLON.Quaternion.Identity();
         this.torso.material = Main.TestRedMaterial;
-        this.head = BABYLON.MeshBuilder.CreateBox("head", { size: 0.1 });
+        this.head = new BABYLON.Mesh("head");
         
-        this.shoulderL = BABYLON.MeshBuilder.CreateBox("shoulderL", { size: 0.01 });
+        this.shoulderL = new BABYLON.Mesh("shoulderL");
         this.shoulderL.parent = this.torso;
         this.shoulderL.position = new BABYLON.Vector3(- 0.15, 0.24, 0);
-        this.elbowL = BABYLON.MeshBuilder.CreateBox("elbowL", { size: 0.01 });
+        this.elbowL = new BABYLON.Mesh("elbowL");
         this.handL = BABYLON.MeshBuilder.CreateBox("handL", { size: 0.01 });
 
-        this.shoulderR = BABYLON.MeshBuilder.CreateBox("shoulderR", { size: 0.01 });
+        this.shoulderR = new BABYLON.Mesh("shoulderR");
         this.shoulderR.parent = this.torso;
         this.shoulderR.position = new BABYLON.Vector3(0.15, 0.24, 0);
-        this.elbowR = BABYLON.MeshBuilder.CreateBox("elbowR", { size: 0.01 });
+        this.elbowR = new BABYLON.Mesh("elbowR");
         this.handR = BABYLON.MeshBuilder.CreateBox("handR", { size: 0.01 });
         
-        this.hipL = BABYLON.MeshBuilder.CreateBox("hipL", { size: 0.06 });
+        this.hipL = new BABYLON.Mesh("hipL");
         this.hipL.parent = this.root;
         this.hipL.position = new BABYLON.Vector3(- 0.13, 0, 0);
-        this.kneeL = BABYLON.MeshBuilder.CreateBox("kneeL", { size: 0.01 });
+        this.kneeL = new BABYLON.Mesh("kneeL");
         this.footL = BABYLON.MeshBuilder.CreateBox("footL", { size: 0.01 });
 
-        this.hipR = BABYLON.MeshBuilder.CreateBox("hipR", { size: 0.06 });
+        this.hipR = new BABYLON.Mesh("hipR");
         this.hipR.parent = this.root;
         this.hipR.position = new BABYLON.Vector3(0.13, 0, 0);
-        this.kneeR = BABYLON.MeshBuilder.CreateBox("kneeR", { size: 0.01 });
+        this.kneeR = new BABYLON.Mesh("kneeR");
         this.footR = BABYLON.MeshBuilder.CreateBox("footR", { size: 0.01 });
         
         this.handL.position.copyFrom(this.position);
@@ -132,7 +130,7 @@ class HumanTest extends Prop {
     public _simpleWalk = () => {
         let dt = this.engine.getDeltaTime() / 1000;
 
-        this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.23, 0.05, 0.25), this.torso.getWorldMatrix());
+        this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.2, 0.05, 0.2), this.torso.getWorldMatrix());
         this.m16.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(0, this.rotation.y - Math.PI / 7, 0);
 
         this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.02, -0.02, 0.01), this.m16.getWorldMatrix());
@@ -376,51 +374,25 @@ class HumanTest extends Prop {
         this.human.legL.setRotationQuaternion(q.normalize());
 
         this.human.armR.setPosition(this.shoulderR.absolutePosition);
-        VMath.QuaternionFromYZAxisToRef(this.elbowR.position.subtract(this.shoulderR.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(this.elbowR.position.subtract(this.shoulderR.absolutePosition).scale(-1), this.right, q);
         this.human.armR.setRotationQuaternion(q.normalize());
 
         this.human.lowerArmR.setPosition(this.elbowR.absolutePosition.clone());
-        VMath.QuaternionFromYZAxisToRef(wristRPosition.subtract(this.elbowR.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(wristRPosition.subtract(this.elbowR.absolutePosition).scale(-1), this.handR.up, q);
         this.human.lowerArmR.setRotationQuaternion(q.normalize());
 
         this.human.handR.setPosition(wristRPosition.clone());
         this.human.handR.setRotationQuaternion(this.handR.rotationQuaternion.multiply(BABYLON.Quaternion.FromEulerAngles(- Math.PI * 0.5, 0, 0)).normalize());
 
         this.human.armL.setPosition(this.shoulderL.absolutePosition);
-        VMath.QuaternionFromYZAxisToRef(this.elbowL.position.subtract(this.shoulderL.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(this.elbowL.position.subtract(this.shoulderL.absolutePosition).scale(-1), this.right.scale(-1), q);
         this.human.armL.setRotationQuaternion(q.normalize());
 
         this.human.lowerArmL.setPosition(this.elbowL.absolutePosition.clone());
-        VMath.QuaternionFromYZAxisToRef(wristLPosition.subtract(this.elbowL.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(wristLPosition.subtract(this.elbowL.absolutePosition).scale(-1), this.handL.up, q);
         this.human.lowerArmL.setRotationQuaternion(q.normalize());
 
         this.human.handL.setPosition(wristLPosition.clone());
         this.human.handL.setRotationQuaternion(this.handL.rotationQuaternion.multiply(BABYLON.Quaternion.FromEulerAngles(- Math.PI * 0.5, 0, 0)).normalize());
-
-        if (this.humanMesh) {
-            this.humanMesh.dispose();
-        }
-        this.humanMesh = BABYLON.CreateLineSystem(
-            "humanMesh",
-            {
-                lines: [
-                    [ this.root.absolutePosition, this.torso.absolutePosition ],
-                    [ this.torso.absolutePosition, this.head.absolutePosition ],
-                    [ this.root.absolutePosition, this.hipL.absolutePosition ],
-                    [ this.root.absolutePosition, this.hipR.absolutePosition ],
-                    [ this.hipL.absolutePosition, this.kneeL.absolutePosition ],
-                    [ this.hipR.absolutePosition, this.kneeR.absolutePosition ],
-                    [ this.kneeL.absolutePosition, this.footL.absolutePosition ],
-                    [ this.kneeR.absolutePosition, this.footR.absolutePosition ],
-                    [ this.torso.absolutePosition, this.shoulderL.absolutePosition ],
-                    [ this.torso.absolutePosition, this.shoulderR.absolutePosition ],
-                    [ this.shoulderL.absolutePosition, this.elbowL.absolutePosition ],
-                    [ this.shoulderR.absolutePosition, this.elbowR.absolutePosition ],
-                    [ this.elbowL.absolutePosition, this.handL.absolutePosition ],
-                    [ this.elbowR.absolutePosition, this.handR.absolutePosition ],
-                ]
-            },
-            this.scene
-        )
     }
 }
