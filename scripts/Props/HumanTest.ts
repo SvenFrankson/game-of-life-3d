@@ -112,7 +112,7 @@ class HumanTest extends Prop {
                         mesh.material = toonMat;
                     }
                     this.m16 = mesh;
-                    this.m16.isVisible = false;
+                    //this.m16.isVisible = false;
                     this.m16.rotationQuaternion = BABYLON.Quaternion.Identity();
                 }
             });
@@ -132,10 +132,11 @@ class HumanTest extends Prop {
     public _simpleWalk = () => {
         let dt = this.engine.getDeltaTime() / 1000;
 
-        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.25, 0.1, 0.15), this.torso.getWorldMatrix());
-        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.1, 0.1, 0.4), this.torso.getWorldMatrix());
-        this.m16.position.copyFrom(this.handR.position);
-        VMath.QuaternionFromZYAxisToRef(this.handL.position.subtract(this.handR.position), BABYLON.Axis.Y, this.m16.rotationQuaternion);
+        this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.23, 0.05, 0.25), this.torso.getWorldMatrix());
+        this.m16.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(0, this.rotation.y - Math.PI / 7, 0);
+
+        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.02, -0.02, 0.01), this.m16.getWorldMatrix());
+        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.01, 0.05, 0.5), this.m16.getWorldMatrix());
         VMath.QuaternionFromYZAxisToRef(this.m16.right, this.m16.forward, this.handR.rotationQuaternion);
         VMath.QuaternionFromYZAxisToRef(this.m16.up.scale(-1), this.m16.forward.add(this.m16.right), this.handL.rotationQuaternion);
         //this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
@@ -290,13 +291,14 @@ class HumanTest extends Prop {
 
         // Arm Left
 
-        this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(this.forward.scale(this.lowerArmLength)).subtractInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
+        let wristLPosition = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0, - this.handLength), this.handL.getWorldMatrix());
+        this.elbowL.position.copyFrom(wristLPosition).subtractInPlace(this.forward.scale(this.lowerArmLength)).subtractInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
 
         let upperArmLZ = BABYLON.Vector3.Zero();
         let lowerArmLZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmLZ.copyFrom(this.handL.position).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(this.lowerArmLength);
-            this.elbowL.position.copyFrom(this.handL.position).subtractInPlace(lowerArmLZ);
+            lowerArmLZ.copyFrom(wristLPosition).subtractInPlace(this.elbowL.position).normalize().scaleInPlace(this.lowerArmLength);
+            this.elbowL.position.copyFrom(wristLPosition).subtractInPlace(lowerArmLZ);
 
             upperArmLZ.copyFrom(this.elbowL.position).subtractInPlace(this.shoulderL.absolutePosition).normalize().scaleInPlace(this.armLength);
             this.elbowL.position.copyFrom(this.shoulderL.absolutePosition).addInPlace(upperArmLZ);
@@ -304,13 +306,14 @@ class HumanTest extends Prop {
         
         // Arm Right
 
-        this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(this.forward.scale(this.lowerArmLength)).addInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
+        let wristRPosition = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0, - this.handLength), this.handR.getWorldMatrix());
+        this.elbowR.position.copyFrom(wristRPosition).subtractInPlace(this.forward.scale(this.lowerArmLength)).addInPlace(this.right.scale(this.lowerArmLength)).subtractInPlace(this.up.scale(this.lowerArmLength));
 
         let upperArmRZ = BABYLON.Vector3.Zero();
         let lowerArmRZ = BABYLON.Vector3.Zero();
         for (let i = 0; i < 3; i++) {
-            lowerArmRZ.copyFrom(this.handR.position).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(this.lowerArmLength);
-            this.elbowR.position.copyFrom(this.handR.position).subtractInPlace(lowerArmRZ);
+            lowerArmRZ.copyFrom(wristRPosition).subtractInPlace(this.elbowR.position).normalize().scaleInPlace(this.lowerArmLength);
+            this.elbowR.position.copyFrom(wristRPosition).subtractInPlace(lowerArmRZ);
 
             upperArmRZ.copyFrom(this.elbowR.position).subtractInPlace(this.shoulderR.absolutePosition).normalize().scaleInPlace(this.armLength);
             this.elbowR.position.copyFrom(this.shoulderR.absolutePosition).addInPlace(upperArmRZ);
@@ -377,10 +380,10 @@ class HumanTest extends Prop {
         this.human.armR.setRotationQuaternion(q.normalize());
 
         this.human.lowerArmR.setPosition(this.elbowR.absolutePosition.clone());
-        VMath.QuaternionFromYZAxisToRef(this.handR.position.subtract(this.elbowR.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(wristRPosition.subtract(this.elbowR.absolutePosition).scale(-1), this.up, q);
         this.human.lowerArmR.setRotationQuaternion(q.normalize());
 
-        this.human.handR.setPosition(this.handR.position.clone());
+        this.human.handR.setPosition(wristRPosition.clone());
         this.human.handR.setRotationQuaternion(this.handR.rotationQuaternion.multiply(BABYLON.Quaternion.FromEulerAngles(- Math.PI * 0.5, 0, 0)).normalize());
 
         this.human.armL.setPosition(this.shoulderL.absolutePosition);
@@ -388,10 +391,10 @@ class HumanTest extends Prop {
         this.human.armL.setRotationQuaternion(q.normalize());
 
         this.human.lowerArmL.setPosition(this.elbowL.absolutePosition.clone());
-        VMath.QuaternionFromYZAxisToRef(this.handL.position.subtract(this.elbowL.absolutePosition).scale(-1), this.up, q);
+        VMath.QuaternionFromYZAxisToRef(wristLPosition.subtract(this.elbowL.absolutePosition).scale(-1), this.up, q);
         this.human.lowerArmL.setRotationQuaternion(q.normalize());
 
-        this.human.handL.setPosition(this.handL.position.clone());
+        this.human.handL.setPosition(wristLPosition.clone());
         this.human.handL.setRotationQuaternion(this.handL.rotationQuaternion.multiply(BABYLON.Quaternion.FromEulerAngles(- Math.PI * 0.5, 0, 0)).normalize());
 
         if (this.humanMesh) {

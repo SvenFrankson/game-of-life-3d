@@ -13,16 +13,18 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
 	processing begun of mesh:  m16
-		processing begun of material:  m16
-		num positions      :  204
-		num normals        :  204
+		processing begun of material:  steel
+		processing begun of material:  black-plastic
+		processing begun of multimaterial:  m16.Multimaterial#0
+		num positions      :  602
+		num normals        :  602
 		num tangents       :  0
-		num uvs            :  408
+		num uvs            :  1204
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  92
+		num triangles      :  246
 ========= Writing of JSON file started =========
 	writing mesh:  m16
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.013 secs
+elapsed time:  0 min, 0.0209 secs
