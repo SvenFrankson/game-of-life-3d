@@ -37,22 +37,25 @@ Exporter version: 6.4.5, Blender version: 2.90.1
 		processing begun of material:  camo
 		processing begun of material:  leather
 		processing begun of material:  cloth
+		processing begun of material:  steel
+		processing begun of material:  black
 		processing begun of multimaterial:  riflewoman.Multimaterial#0
-		num positions      :  1051
-		num normals        :  1051
+		num positions      :  1398
+		num normals        :  1398
 		num tangents       :  0
-		num uvs            :  0
+		num uvs            :  2796
 		num uvs2           :  0
 		num colors         :  0
-		num triangles      :  1946
+		num triangles      :  2338
 		Skeleton stats:  
-			Total Influencers:  2106
-			Avg # of influencers per vertex:  2.0038
-			Highest # of influencers observed:  6, num vertices with this:  5
+			Total Influencers:  2758
+			Avg # of influencers per vertex:  1.9728
+			Highest # of influencers observed:  6, num vertices with this:  16
 			exported as 6 influencers
-			num skeletonWeights and skeletonIndices:  8408
+			num skeletonWeights and skeletonIndices:  11184
+	processing begun of node:  Empty
 ========= Writing of JSON file started =========
 	writing mesh:  human
 ========= Writing of JSON file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.3211 secs
+elapsed time:  0 min, 0.3922 secs
