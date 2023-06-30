@@ -130,21 +130,22 @@ class HumanTest extends Prop {
     public _simpleWalk = () => {
         let dt = this.engine.getDeltaTime() / 1000;
 
-        this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.2, 0.05, 0.2), this.torso.getWorldMatrix());
-        this.m16.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(0, this.rotation.y - Math.PI / 7, 0);
+        //this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.05, 0.25, 0.3), this.torso.getWorldMatrix());
+        this.m16.position = this.shoulderR.absolutePosition.add(this.forward.scale(0.05));
+        this.m16.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(0, this.rotation.y, 0);
 
-        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.02, -0.02, 0.01), this.m16.getWorldMatrix());
-        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.01, 0.05, 0.5), this.m16.getWorldMatrix());
+        this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.02, -0.07, 0.38), this.m16.getWorldMatrix());
+        this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.01, 0, 0.67), this.m16.getWorldMatrix());
         VMath.QuaternionFromYZAxisToRef(this.m16.right, this.m16.forward, this.handR.rotationQuaternion);
         VMath.QuaternionFromYZAxisToRef(this.m16.up.scale(-1), this.m16.forward.add(this.m16.right), this.handL.rotationQuaternion);
         //this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
         //this.handL.position = this.footR.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).subtract(this.right.scale(0.4));
         
-        //this.position.addInPlace(this.forward.scale(dt * 0.8));
-        this.rotation.y += dt * Math.PI * 0.05;
+        this.position.addInPlace(this.forward.scale(dt * 0.8));
+        //this.rotation.y += dt * Math.PI * 0.05;
         if (!this._steping) {
-            let footTargetR = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.12, 0, 0), this.getWorldMatrix());
-            let footTargetL = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.12, 0, 0), this.getWorldMatrix());
+            let footTargetR = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.08, 0, 0), this.getWorldMatrix());
+            let footTargetL = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.08, 0, 0), this.getWorldMatrix());
 
             let dL = BABYLON.Vector3.Distance(this.footL.absolutePosition, footTargetL);
             let dR = BABYLON.Vector3.Distance(this.footR.absolutePosition, footTargetR);
@@ -385,7 +386,8 @@ class HumanTest extends Prop {
         this.human.handR.setRotationQuaternion(this.handR.rotationQuaternion.multiply(BABYLON.Quaternion.FromEulerAngles(- Math.PI * 0.5, 0, 0)).normalize());
 
         this.human.armL.setPosition(this.shoulderL.absolutePosition);
-        VMath.QuaternionFromYZAxisToRef(this.elbowL.position.subtract(this.shoulderL.absolutePosition).scale(-1), this.right.scale(-1), q);
+        let armLUp = this.right.scale(-1);
+        VMath.QuaternionFromYZAxisToRef(this.elbowL.position.subtract(this.shoulderL.absolutePosition).scale(-1), armLUp.add(this.handL.up), q);
         this.human.armL.setRotationQuaternion(q.normalize());
 
         this.human.lowerArmL.setPosition(this.elbowL.absolutePosition.clone());
