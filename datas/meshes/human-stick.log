@@ -1,0 +1,61 @@
+Exporter version: 6.4.5, Blender version: 2.90.1
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used :
+		Inline textures     :  false
+		Material Type       :  PBR
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		Keep Z-up r-handed  :  no
+		Texture directory   :  C:\Users\svent\Documents\sven-frankson\game-of-life-3d\datas\meshes\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of skeleton:  Armature, id:  0
+		processing begun of bone:  ass, index:  0
+		processing begun of bone:  torso, index:  1
+		processing begun of bone:  upper-leg-right, index:  2
+		processing begun of bone:  head, index:  3
+		processing begun of bone:  leg-right, index:  4
+		processing begun of bone:  foot-right, index:  5
+		processing begun of bone:  upper-leg-left, index:  6
+		processing begun of bone:  leg-left, index:  7
+		processing begun of bone:  foot-left, index:  8
+		processing begun of bone:  hand-right, index:  9
+		processing begun of bone:  thumb-right, index:  10
+		processing begun of bone:  should-right, index:  11
+		processing begun of bone:  should-left, index:  12
+		processing begun of bone:  upper-arm-right, index:  13
+		processing begun of bone:  lower-arm-right, index:  14
+		processing begun of bone:  upper-arm-left, index:  15
+		processing begun of bone:  lower-arm-left, index:  16
+		processing begun of bone:  hand-left, index:  17
+		processing begun of bone:  thumb-left, index:  18
+	processing begun of mesh:  human
+		processing begun of material:  skin
+		processing begun of material:  camo
+		processing begun of material:  leather
+		processing begun of material:  cloth
+		processing begun of material:  steel
+		processing begun of material:  black
+		processing begun of multimaterial:  human_stick.Multimaterial#0
+		num positions      :  727
+		num normals        :  727
+		num tangents       :  0
+		num uvs            :  1454
+		num uvs2           :  0
+		num colors         :  0
+		num triangles      :  258
+		Skeleton stats:  
+			Total Influencers:  727
+			Avg # of influencers per vertex:  1
+			Highest # of influencers observed:  1, num vertices with this:  727
+			exported as 1 influencers
+			num skeletonWeights and skeletonIndices:  2908
+	processing begun of node:  Empty
+========= Writing of JSON file started =========
+	writing mesh:  human
+========= Writing of JSON file completed =========
+========= end of processing =========
+elapsed time:  0 min, 0.0499 secs

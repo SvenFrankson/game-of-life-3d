@@ -50,7 +50,7 @@ class Human extends Prop {
     protected _instantiated = false;
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
-            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/riflewoman.babylon", "", this.scene, (meshes, particlesSystems, skeletons) => {
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/human-stick.babylon", "", this.scene, (meshes, particlesSystems, skeletons) => {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         this.humanMesh = mesh;
