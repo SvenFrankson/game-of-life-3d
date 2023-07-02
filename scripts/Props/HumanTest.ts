@@ -29,6 +29,9 @@ class HumanTest extends Prop {
 
     public m16: BABYLON.Mesh;
 
+    public targetPosition: BABYLON.Mesh;
+    public targetRifle: BABYLON.Mesh;
+
     public get engine(): BABYLON.Engine {
         return this.scene.getEngine();
     }
@@ -38,6 +41,12 @@ class HumanTest extends Prop {
         this.hasObstacle = false;
 
         this.human = new Human(level);
+
+
+        this.targetPosition = BABYLON.MeshBuilder.CreateBox("targetPosition", { size: 0.2 });
+        this.targetRifle = BABYLON.MeshBuilder.CreateBox("targetRifle", { size: 0.2 });
+        this.targetRifle.position.y = 1.5;
+        this.targetRifle.position.z = 3;
     }
 
     protected _instantiated = false;
@@ -132,7 +141,9 @@ class HumanTest extends Prop {
 
         //this.m16.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.05, 0.25, 0.3), this.torso.getWorldMatrix());
         this.m16.position = this.shoulderR.absolutePosition.add(this.forward.scale(0.05));
-        this.m16.rotationQuaternion = BABYLON.Quaternion.FromEulerAngles(0, this.rotation.y, 0);
+        let q = BABYLON.Quaternion.Identity();
+        VMath.QuaternionFromZYAxisToRef(this.targetRifle.position.subtract(this.m16.position), BABYLON.Axis.Y, q);
+        this.m16.rotationQuaternion = BABYLON.Quaternion.Slerp(this.m16.rotationQuaternion, q, 0.05);
 
         this.handR.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.02, -0.07, 0.38), this.m16.getWorldMatrix());
         this.handL.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.01, 0, 0.67), this.m16.getWorldMatrix());
@@ -141,15 +152,26 @@ class HumanTest extends Prop {
         //this.handR.position = this.footL.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).add(this.right.scale(0.4));
         //this.handL.position = this.footR.position.multiplyByFloats(1, 0, 1).add(new BABYLON.Vector3(0, 0.8, 0)).subtract(this.right.scale(0.4));
         
-        this.position.addInPlace(this.forward.scale(dt * 0.8));
-        //this.rotation.y += dt * Math.PI * 0.05;
+        if (BABYLON.Vector3.DistanceSquared(this.position, this.targetPosition.position) > 0.01) {
+            let dir = this.targetPosition.position.subtract(this.position).normalize();
+            this.position.addInPlace(dir.scale(dt * 0.8));
+        }
+        let dirToTarget = this.targetRifle.position.subtract(this.position).normalize();
+        let angle = VMath.AngleFromToAround(this.forward, dirToTarget, BABYLON.Axis.Y);
+        if (angle > Math.PI / 64) {
+            this.rotation.y += dt * Math.PI * 0.1;
+
+        }
+        else if (angle < - Math.PI / 64) {
+            this.rotation.y -= dt * Math.PI * 0.1;
+        }
         if (!this._steping) {
             let footTargetR = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.08, 0, 0), this.getWorldMatrix());
             let footTargetL = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.08, 0, 0), this.getWorldMatrix());
 
             let dL = BABYLON.Vector3.Distance(this.footL.absolutePosition, footTargetL);
             let dR = BABYLON.Vector3.Distance(this.footR.absolutePosition, footTargetR);
-            console.log(dL + " " + dR);
+            
             if (dL > dR) {
                 if (dL > 0.01) {
                     this._steping = true;
@@ -191,7 +213,6 @@ class HumanTest extends Prop {
     }
 
     public start(): void {
-        console.log("Start human");
         this.scene.onBeforeRenderObservable.add(this._update);
     }
 
@@ -204,7 +225,7 @@ class HumanTest extends Prop {
                 this.scene.pointerX,
                 this.scene.pointerY,
                 (mesh) => {
-                    return mesh === this.handL || mesh === this.handR || mesh === this.footL || mesh === this.footR;
+                    return mesh === this.handL || mesh === this.handR || mesh === this.footL || mesh === this.footR || mesh === this.targetPosition || mesh === this.targetRifle;
                 }
             )
 
@@ -220,6 +241,12 @@ class HumanTest extends Prop {
             }
             else if (pickedMesh === this.footR) {
                 this.target = this.footR;
+            }
+            else if (pickedMesh === this.targetPosition) {
+                this.target = this.targetPosition;
+            }
+            else if (pickedMesh === this.targetRifle) {
+                this.target = this.targetRifle;
             }
 
             if (this.target) {
@@ -263,6 +290,8 @@ class HumanTest extends Prop {
         let dt = this.engine.getDeltaTime() / 1000;
         this._timer += dt;
 
+        let q = BABYLON.Quaternion.Identity();
+
         let footCenter = this.footL.position.add(this.footR.position).scaleInPlace(0.5);
         let handCenter = this.handL.position.add(this.handR.position).scaleInPlace(0.5);
         let torsoDir = handCenter.subtract(footCenter).normalize();
@@ -270,16 +299,17 @@ class HumanTest extends Prop {
         torsoDir = BABYLON.Vector3.Up();
 
         this.root.position.copyFrom(footCenter);
-        this.root.position.y = this.rootAlt;
+        this.root.position.y *= 0.5;
+        this.root.position.y += this.rootAlt;
 
         // Shake that ass
         let footDir = this.footR.position.subtract(this.footL.position).normalize();
-        footDir.addInPlace(this.right.scale(3)).normalize();
+        footDir.addInPlace(this.right.scale(10)).normalize();
         VMath.QuaternionFromXYAxisToRef(footDir, torsoDir, this.root.rotationQuaternion);
 
         // Alpha shouldering
         let handDir = this.handR.position.subtract(this.handL.position).normalize();
-        handDir.addInPlace(this.right.scale(2)).normalize();
+        handDir.addInPlace(this.right.scale(4)).normalize();
         VMath.QuaternionFromXYAxisToRef(handDir, torsoDir, this.torso.rotationQuaternion);
 
         let shoulderForward = BABYLON.Vector3.Cross(this.head.absolutePosition.subtract(this.torso.absolutePosition), handDir).normalize();
@@ -287,6 +317,8 @@ class HumanTest extends Prop {
 
         this.torso.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, 0), this.root.getWorldMatrix());
         this.head.position = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0, 0.33, -0.05), this.torso.getWorldMatrix());
+        VMath.QuaternionFromZYAxisToRef(this.targetRifle.position.subtract(this.head.position), BABYLON.Axis.Y, q);
+        this.head.rotationQuaternion = q.clone().normalize();
 
         // Arm Left
 
@@ -348,8 +380,6 @@ class HumanTest extends Prop {
             this.kneeR.position.copyFrom(this.hipR.absolutePosition).addInPlace(upperLegRZ);
         }
 
-        let q = BABYLON.Quaternion.Identity();
-
         this.human.root.setPosition(this.root.absolutePosition);
         VMath.QuaternionFromYZAxisToRef(this.torso.absolutePosition.subtract(this.root.absolutePosition).scale(-1), footForward, q);
         this.human.root.setRotationQuaternion(q.normalize());
@@ -357,6 +387,10 @@ class HumanTest extends Prop {
         this.human.torso.setPosition(this.torso.absolutePosition);
         VMath.QuaternionFromYZAxisToRef(this.head.absolutePosition.subtract(this.torso.absolutePosition).scale(-1), shoulderForward, q);
         this.human.torso.setRotationQuaternion(q.normalize());
+
+        this.human.head.setPosition(this.head.absolutePosition);
+        VMath.QuaternionFromYZAxisToRef(this.head.up.scale(-1), this.head.forward.scale(-1), q);
+        this.human.head.setRotationQuaternion(q.normalize());
 
         this.human.upperLegR.setPosition(this.hipR.absolutePosition.clone());
         VMath.QuaternionFromYZAxisToRef(this.kneeR.position.subtract(this.hipR.absolutePosition).scale(-1), this.forward.add(this.up), q);

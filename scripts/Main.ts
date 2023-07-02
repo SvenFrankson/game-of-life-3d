@@ -120,7 +120,7 @@ class Main {
         this.camera.setPosition(new BABYLON.Vector3(- 4, 6, 10));
         this.camera.attachControl();
         this.camera.getScene();
-        //OutlinePostProcess.AddOutlinePostProcess(this.camera);
+        OutlinePostProcess.AddOutlinePostProcess(this.camera);
         this.animateCamera = AnimationFactory.CreateVector3(this.camera, this.camera, "target");
 
         this.roadManager = new RoadMeshManager();

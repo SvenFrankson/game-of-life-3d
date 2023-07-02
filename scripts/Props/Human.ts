@@ -1,6 +1,7 @@
 class Human extends Prop {
     
     public root: BABYLON.Bone;
+    public head: BABYLON.Bone;
     public torso: BABYLON.Bone;
 
     public upperLegL: BABYLON.Bone;
@@ -50,7 +51,7 @@ class Human extends Prop {
     protected _instantiated = false;
     public async instantiate(): Promise<void> {
         return new Promise<void>(resolve => {
-            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/human-stick.babylon", "", this.scene, (meshes, particlesSystems, skeletons) => {
+            BABYLON.SceneLoader.ImportMesh("", "datas/meshes/riflewoman.babylon", "", this.scene, (meshes, particlesSystems, skeletons) => {
                 meshes.forEach(mesh => {
                     if (mesh instanceof BABYLON.Mesh) {
                         this.humanMesh = mesh;
@@ -77,6 +78,8 @@ class Human extends Prop {
                 skeletons.forEach(skeleton => {
                     console.log(skeleton);
                     this.root = skeleton.bones.find(bone => { return bone.name === "ass"; });
+                    this.head = skeleton.bones.find(bone => { return bone.name === "head"; });
+                    this.head.parent = undefined;
                     this.torso = skeleton.bones.find(bone => { return bone.name === "torso"; });
                     console.log("torso");
                     console.log(this.torso);
