@@ -128,7 +128,16 @@ class Main {
         
         this.level = new Level(this);
 
-        //let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+        let ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+        ground.material = Main.TestGreenMaterial;
+        for (let i = 0; i < 100; i++) {
+            let rock = BABYLON.MeshBuilder.CreateBox("rock-" + i, { size: 0.2 + 0.2 * Math.random() });
+            rock.position.x = - 2 + 4 * Math.random();
+            rock.position.z = - 2 + 4 * Math.random();
+            rock.rotation.x = Math.random() * Math.PI;
+            rock.rotation.y = Math.random() * Math.PI;
+            rock.rotation.z = Math.random() * Math.PI;
+        }
         let human = new HumanTest(this.level);
         human.instantiate();
         return;

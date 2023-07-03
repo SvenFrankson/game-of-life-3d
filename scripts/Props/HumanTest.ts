@@ -158,16 +158,30 @@ class HumanTest extends Prop {
         }
         let dirToTarget = this.targetRifle.position.subtract(this.position).normalize();
         let angle = VMath.AngleFromToAround(this.forward, dirToTarget, BABYLON.Axis.Y);
-        if (angle > Math.PI / 64) {
-            this.rotation.y += dt * Math.PI * 0.1;
+        if (angle > Math.PI / 32) {
+            this.rotation.y += dt * Math.PI * 0.3;
 
         }
-        else if (angle < - Math.PI / 64) {
-            this.rotation.y -= dt * Math.PI * 0.1;
+        else if (angle < - Math.PI / 32) {
+            this.rotation.y -= dt * Math.PI * 0.3;
         }
         if (!this._steping) {
             let footTargetR = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(0.08, 0, 0), this.getWorldMatrix());
+            let rayR = new BABYLON.Ray(footTargetR.add(new BABYLON.Vector3(0, 2, 0)), new BABYLON.Vector3(0, - 1, 0));
+            let hitR = this.scene.pickWithRay(rayR, (mesh) => {
+                return mesh.name === "ground" || mesh.name.startsWith("rock");
+            });
+            if (hitR.hit) {
+                footTargetR = hitR.pickedPoint;
+            }
             let footTargetL = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(-0.08, 0, 0), this.getWorldMatrix());
+            let rayL = new BABYLON.Ray(footTargetL.add(new BABYLON.Vector3(0, 2, 0)), new BABYLON.Vector3(0, - 1, 0));
+            let hitL = this.scene.pickWithRay(rayL, (mesh) => {
+                return mesh.name === "ground" || mesh.name.startsWith("rock");
+            });
+            if (hitL.hit) {
+                footTargetL = hitL.pickedPoint;
+            }
 
             let dL = BABYLON.Vector3.Distance(this.footL.absolutePosition, footTargetL);
             let dR = BABYLON.Vector3.Distance(this.footR.absolutePosition, footTargetR);
@@ -191,6 +205,8 @@ class HumanTest extends Prop {
         return new Promise<void>(resolve => {
             let origin = foot.position.clone();
             let destination = target.clone();
+            let d = BABYLON.Vector3.Distance(origin, destination);
+            let h = Math.min(0.1, d);
             let up = this.up;
             let duration = 0.8;
             let t = 0;
@@ -199,7 +215,7 @@ class HumanTest extends Prop {
                 let f = t / duration;
                 if (f < 1) {
                     let p = origin.scale(1 - f).addInPlace(destination.scale(f));
-                    p.addInPlace(up.scale(0.1 * Math.sin(f * Math.PI)));
+                    p.addInPlace(up.scale(h * Math.sin(f * Math.PI)));
                     foot.position.copyFrom(p);
                 }
                 else {
